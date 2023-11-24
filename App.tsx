@@ -1,10 +1,15 @@
 /* eslint-disable camelcase */
+import { StatusBar, Text } from 'react-native'
+
+import { GluestackUIProvider } from '@gluestack-ui/themed'
+
 import {
   useFonts,
   Karla_400Regular,
   Karla_700Bold,
 } from '@expo-google-fonts/karla'
-import { StatusBar, Text, View } from 'react-native'
+import { Loading } from '@components/Loading'
+import { config } from './config/gluestack-ui.config'
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -13,7 +18,7 @@ export default function App() {
   })
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <GluestackUIProvider config={config}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor="transparent"
@@ -22,8 +27,8 @@ export default function App() {
       {fontsLoaded ? (
         <Text style={{ fontFamily: 'Karla_400Regular' }}>Hello World!</Text>
       ) : (
-        <View />
+        <Loading />
       )}
-    </View>
+    </GluestackUIProvider>
   )
 }
