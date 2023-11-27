@@ -22,7 +22,7 @@ export function Button({
   ...props
 }: Props) {
   return (
-    <ButtonGroup w="$full" {...props}>
+    <ButtonGroup w="$full">
       <GluestackButton
         h={42}
         bgColor={
@@ -35,6 +35,7 @@ export function Button({
         borderRadius={6}
         alignItems="center"
         w="$full"
+        {...props}
       >
         {hasIcon ? (
           <ButtonIcon

@@ -5,8 +5,16 @@ import MarketspaceSvg from '@assets/logotype.svg'
 import { Input } from '@components/Input'
 import { InputPassword } from '@components/InputPassword'
 import { Button } from '@components/Button'
+import { useNavigation } from '@react-navigation/native'
+import { AuthNavigationRoutesProps } from '@routes/auth.routes'
 
 export function SignIn() {
+  const navigation = useNavigation<AuthNavigationRoutesProps>()
+
+  function handleNewAccount() {
+    navigation.navigate('signUp')
+  }
+
   return (
     <VStack bgColor="$gray700" flex={1}>
       <ScrollView
@@ -40,7 +48,11 @@ export function SignIn() {
               Still doesn't have access?
             </Text>
           </Center>
-          <Button title="Create account" variant="tertiary" />
+          <Button
+            title="Create account"
+            variant="tertiary"
+            onPress={handleNewAccount}
+          />
         </VStack>
       </ScrollView>
     </VStack>
