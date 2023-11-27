@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   ButtonGroup,
   ButtonIcon,
@@ -21,8 +22,9 @@ export function Button({
   ...props
 }: Props) {
   return (
-    <ButtonGroup w="$full" h={42} {...props}>
+    <ButtonGroup w="$full" {...props}>
       <GluestackButton
+        h={42}
         bgColor={
           variant === 'secondary'
             ? '$gray100'
