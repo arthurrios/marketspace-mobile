@@ -13,7 +13,7 @@ import { Plus, User } from 'phosphor-react-native'
 
 export function Home() {
   return (
-    <ScrollView bgColor="$gray600" py="$16" px="$6">
+    <ScrollView bgColor="$gray600" py={72} px="$6">
       <HStack w="$full" justifyContent="space-between" gap="$2">
         <Pressable>
           <HStack flex={1} w={200} gap={10}>

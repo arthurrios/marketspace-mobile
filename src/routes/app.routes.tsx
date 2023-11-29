@@ -43,14 +43,18 @@ export function AppRoutes() {
         name="home"
         component={Home}
         options={{
-          tabBarIcon: () => <House size={iconSize} />,
+          tabBarIcon: ({ focused }) => (
+            <House size={iconSize} weight={focused ? 'bold' : 'regular'} />
+          ),
         }}
       />
       <Screen
         name="mySales"
         component={MySales}
         options={{
-          tabBarIcon: () => <Tag size={iconSize} />,
+          tabBarIcon: ({ focused }) => (
+            <Tag size={iconSize} weight={focused ? 'bold' : 'regular'} />
+          ),
         }}
       />
       <Screen
