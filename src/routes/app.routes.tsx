@@ -40,7 +40,8 @@ export function AppRoutes() {
         tabBarStyle: {
           backgroundColor: '#F7F7F8',
           borderTopWidth: 0,
-          height: Platform.OS === 'android' ? 'auto' : 96,
+          height: Platform.OS === 'android' ? 'auto' : 76,
+          paddingTop: 20,
         },
       }}
     >
@@ -49,7 +50,11 @@ export function AppRoutes() {
         component={Home}
         options={{
           tabBarIcon: ({ focused }) => (
-            <House size={iconSize} weight={focused ? 'bold' : 'regular'} />
+            <House
+              size={iconSize}
+              color={focused ? '#3E3A40' : '#9F9BA1'}
+              weight={focused ? 'bold' : 'regular'}
+            />
           ),
         }}
       />
@@ -58,7 +63,11 @@ export function AppRoutes() {
         component={MySales}
         options={{
           tabBarIcon: ({ focused }) => (
-            <Tag size={iconSize} weight={focused ? 'bold' : 'regular'} />
+            <Tag
+              size={iconSize}
+              color={focused ? '#3E3A40' : '#9F9BA1'}
+              weight={focused ? 'bold' : 'regular'}
+            />
           ),
         }}
       />
