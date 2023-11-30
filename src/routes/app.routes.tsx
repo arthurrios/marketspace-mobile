@@ -6,9 +6,8 @@ import { Home } from '@screens/Home'
 import { MySales } from '@screens/MySales'
 import { Platform } from 'react-native'
 import { House, SignOut, Tag } from 'phosphor-react-native'
-import { useNavigation } from '@react-navigation/native'
-import { Button, View } from '@gluestack-ui/themed'
-import { AuthNavigationRoutesProps } from '@routes/auth.routes'
+import React from 'react'
+import { View } from '@gluestack-ui/themed'
 
 type AppRoutes = {
   home: undefined
@@ -21,7 +20,13 @@ export type AppNavigationRoutesProps = BottomTabNavigationProp<AppRoutes>
 const { Navigator, Screen } = createBottomTabNavigator<AppRoutes>()
 
 export function AppRoutes() {
-  function LogOut() {}
+  function LogOut() {
+    function handleLogOut() {
+      console.log('logOut')
+    }
+
+    return <View />
+  }
 
   const iconSize = 24
 
