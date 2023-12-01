@@ -1,24 +1,46 @@
 import { Button } from '@components/Button'
+import { ConditionTag } from '@components/ConditionTag'
 import { Input } from '@components/Input'
 import { ProductAd } from '@components/ProductAd'
 import {
+  Checkbox,
+  CheckboxIcon,
+  CheckboxIndicator,
+  CheckboxGroup,
   HStack,
   Image,
+  Modal,
+  ModalBackdrop,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
   Pressable,
   ScrollView,
+  Switch,
   Text,
   VStack,
   View,
+  CheckboxLabel,
+  ModalFooter,
 } from '@gluestack-ui/themed'
 import {
   ArrowRight,
+  Check,
   MagnifyingGlass,
   Plus,
   Sliders,
   Tag,
+  X,
 } from 'phosphor-react-native'
+import { useState } from 'react'
 
 export function Home() {
+  const [showModal, setShowModal] = useState(false)
+
+  const [isNew, setIsNew] = useState(true)
+  const [paymentMethodsSelected, setPaymentMethodsSelected] = useState([])
+
   return (
     <ScrollView
       bgColor="$gray600"
@@ -105,7 +127,12 @@ export function Home() {
                   <MagnifyingGlass weight="bold" color="#3E3A40" />
                 </Pressable>
                 <View h={18} w={1} bgColor="$gray400" />
-                <Pressable>
+                <Pressable
+                  onPress={() => {
+                    setShowModal(true)
+                    console.log('Modal clicked')
+                  }}
+                >
                   <Sliders weight="bold" color="#3E3A40" />
                 </Pressable>
               </HStack>
@@ -122,6 +149,141 @@ export function Home() {
             <ProductAd />
           </HStack>
         </VStack>
+
+        <Modal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          closeOnOverlayClick
+          position="relative"
+        >
+          <ModalBackdrop />
+          <ModalContent
+            h={612}
+            w="$full"
+            borderRadius="$3xl"
+            bgColor="$gray600"
+            position="absolute"
+            bottom={0}
+            px="$2"
+            py="$8"
+          >
+            <ModalHeader position="relative">
+              <View
+                position="absolute"
+                top={-16}
+                left={166}
+                w={56}
+                h={4}
+                bgColor="$gray400"
+                opacity={0.3}
+              />
+              <Text fontFamily="$heading" fontSize="$xl">
+                Filter ads
+              </Text>
+              <ModalCloseButton>
+                <X color="#9F9BA1" />
+              </ModalCloseButton>
+            </ModalHeader>
+
+            <ModalBody>
+              <VStack gap="$6">
+                <VStack gap="$3">
+                  <Text fontFamily="$heading" fontSize="$sm">
+                    Condition
+                  </Text>
+
+                  <HStack gap="$2">
+                    <ConditionTag
+                      title="new"
+                      isActive={isNew}
+                      onPress={() => setIsNew(true)}
+                    />
+                    <ConditionTag
+                      title="old"
+                      isActive={!isNew}
+                      onPress={() => setIsNew(false)}
+                    />
+                  </HStack>
+                </VStack>
+
+                <VStack gap="$3">
+                  <Text fontFamily="$heading" fontSize="$sm">
+                    Accept trade?
+                  </Text>
+                  <Switch
+                    sx={{
+                      _light: {
+                        props: {
+                          trackColor: {
+                            false: '#D9D8DA',
+                            true: '#647AC7',
+                          },
+                          thumbColor: '#F7F7F8',
+                        },
+                      },
+                    }}
+                  />
+                </VStack>
+
+                <VStack gap="$3">
+                  <Text fontFamily="$heading" fontSize="$sm">
+                    Payment methods accepted
+                  </Text>
+                  <CheckboxGroup
+                    value={paymentMethodsSelected}
+                    onChange={(keys) => {
+                      setPaymentMethodsSelected(keys)
+                      console.log(paymentMethodsSelected)
+                    }}
+                  >
+                    <VStack space="sm">
+                      <Checkbox value="Voucher">
+                        <CheckboxIndicator mr="$2">
+                          <CheckboxIcon as={Check} />
+                        </CheckboxIndicator>
+                        <CheckboxLabel color="#3E3A40">Voucher</CheckboxLabel>
+                      </Checkbox>
+                      <Checkbox value="Pix">
+                        <CheckboxIndicator mr="$2">
+                          <CheckboxIcon as={Check} />
+                        </CheckboxIndicator>
+                        <CheckboxLabel color="#3E3A40">Pix</CheckboxLabel>
+                      </Checkbox>
+                      <Checkbox value="Cash">
+                        <CheckboxIndicator mr="$2">
+                          <CheckboxIcon as={Check} />
+                        </CheckboxIndicator>
+                        <CheckboxLabel color="#3E3A40">Cash</CheckboxLabel>
+                      </Checkbox>
+                      <Checkbox value="Credit Card">
+                        <CheckboxIndicator mr="$2">
+                          <CheckboxIcon as={Check} />
+                        </CheckboxIndicator>
+                        <CheckboxLabel color="#3E3A40">
+                          Credit Card
+                        </CheckboxLabel>
+                      </Checkbox>
+                      <Checkbox value="Bank Deposit">
+                        <CheckboxIndicator mr="$2">
+                          <CheckboxIcon as={Check} />
+                        </CheckboxIndicator>
+                        <CheckboxLabel color="#3E3A40">
+                          Bank Deposit
+                        </CheckboxLabel>
+                      </Checkbox>
+                    </VStack>
+                  </CheckboxGroup>
+                </VStack>
+              </VStack>
+            </ModalBody>
+            <ModalFooter>
+              <HStack space="md">
+                <Button title="Reset filters" variant="tertiary" />
+                <Button title="Apply filters" variant="secondary" />
+              </HStack>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </View>
     </ScrollView>
   )
