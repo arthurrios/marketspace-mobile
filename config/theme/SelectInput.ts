@@ -1,4 +1,4 @@
-import { createStyle } from '@gluestack-style/react';
+import { createStyle } from '@gluestack-style/react'
 
 export const SelectInput = createStyle({
   _web: {
@@ -16,4 +16,4 @@ export const SelectInput = createStyle({
       placeholderTextColor: '$textDark400',
     },
   },
-});
+})

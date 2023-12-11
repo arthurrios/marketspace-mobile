@@ -130,7 +130,6 @@ export function Home() {
                 <Pressable
                   onPress={() => {
                     setShowModal(true)
-                    console.log('Modal clicked')
                   }}
                 >
                   <Sliders weight="bold" color="#3E3A40" />
@@ -233,29 +232,28 @@ export function Home() {
                     value={paymentMethodsSelected}
                     onChange={(keys) => {
                       setPaymentMethodsSelected(keys)
-                      console.log(paymentMethodsSelected)
                     }}
                   >
                     <VStack space="sm">
-                      <Checkbox value="Voucher">
+                      <Checkbox value="Voucher" aria-label="voucher">
                         <CheckboxIndicator mr="$2">
                           <CheckboxIcon as={Check} />
                         </CheckboxIndicator>
                         <CheckboxLabel color="#3E3A40">Voucher</CheckboxLabel>
                       </Checkbox>
-                      <Checkbox value="Pix">
+                      <Checkbox value="Pix" aria-label="pix">
                         <CheckboxIndicator mr="$2">
                           <CheckboxIcon as={Check} />
                         </CheckboxIndicator>
                         <CheckboxLabel color="#3E3A40">Pix</CheckboxLabel>
                       </Checkbox>
-                      <Checkbox value="Cash">
+                      <Checkbox value="Cash" aria-label="cash">
                         <CheckboxIndicator mr="$2">
                           <CheckboxIcon as={Check} />
                         </CheckboxIndicator>
                         <CheckboxLabel color="#3E3A40">Cash</CheckboxLabel>
                       </Checkbox>
-                      <Checkbox value="Credit Card">
+                      <Checkbox value="Credit Card" aria-label="credit card">
                         <CheckboxIndicator mr="$2">
                           <CheckboxIcon as={Check} />
                         </CheckboxIndicator>
@@ -263,7 +261,7 @@ export function Home() {
                           Credit Card
                         </CheckboxLabel>
                       </Checkbox>
-                      <Checkbox value="Bank Deposit">
+                      <Checkbox value="Bank Deposit" aria-label="back deposit">
                         <CheckboxIndicator mr="$2">
                           <CheckboxIcon as={Check} />
                         </CheckboxIndicator>

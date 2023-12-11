@@ -1,8 +1,8 @@
-import { createStyle } from '@gluestack-style/react';
+import { createStyle } from '@gluestack-style/react'
 
 export const SelectActionsheetItemText = createStyle({
   mx: '$2',
-  fontSize: '$md',
+  fontSize: '$sm',
   fontFamily: '$body',
   fontWeight: '$normal',
   lineHeight: '$md',
@@ -10,4 +10,4 @@ export const SelectActionsheetItemText = createStyle({
   _dark: {
     color: '$textDark200',
   },
-});
+})
