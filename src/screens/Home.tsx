@@ -23,7 +23,10 @@ import {
   View,
   CheckboxLabel,
   ModalFooter,
+  FlatList,
 } from '@gluestack-ui/themed'
+import { useNavigation } from '@react-navigation/native'
+import { AppNavigationRoutesProps } from '@routes/app.routes'
 import {
   ArrowRight,
   Check,
@@ -38,8 +41,24 @@ import { useState } from 'react'
 export function Home() {
   const [showModal, setShowModal] = useState(false)
 
+  const [products, setProducts] = useState([
+    'Red Sneakers',
+    'Blue Sneakers',
+    'Green Sneakers',
+    'Purple Sneakers',
+    'Orange Sneakers',
+    'Black Sneakers',
+    'White Sneakers',
+  ])
+
   const [isNew, setIsNew] = useState(true)
   const [paymentMethodsSelected, setPaymentMethodsSelected] = useState([])
+
+  const navigation = useNavigation<AppNavigationRoutesProps>()
+
+  function handleOpenProductDetails() {
+    navigation.navigate('product')
+  }
 
   return (
     <ScrollView
@@ -138,15 +157,23 @@ export function Home() {
             </Input>
           </VStack>
 
-          <HStack gap="$6" flexWrap="wrap" justifyContent="space-between">
-            <ProductAd userImg="https://github.com/arthurrios.png" />
-            <ProductAd />
-            <ProductAd />
-            <ProductAd />
-            <ProductAd />
-            <ProductAd />
-            <ProductAd />
-          </HStack>
+          <FlatList
+            data={products}
+            keyExtractor={(item) => item}
+            renderItem={({ item }) => (
+              <ProductAd
+                userImg="https://github.com/arthurrios.png"
+                onPress={handleOpenProductDetails}
+              />
+            )}
+            showsHorizontalScrollIndicator={false}
+            columnWrapperStyle={{
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+            }}
+            numColumns={2}
+            contentContainerStyle={{ gap: 24 }}
+          />
         </VStack>
 
         <Modal

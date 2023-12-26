@@ -4,15 +4,16 @@ import {
 } from '@react-navigation/bottom-tabs'
 import { Home } from '@screens/Home'
 import { MySales } from '@screens/MySales'
+import { Product } from '@screens/Product'
 import { Platform } from 'react-native'
 import { House, SignOut, Tag } from 'phosphor-react-native'
-import React from 'react'
 import { View } from '@gluestack-ui/themed'
 
 type AppRoutes = {
   home: undefined
   mySales: undefined
   logOut: undefined
+  product: undefined
 }
 
 export type AppNavigationRoutesProps = BottomTabNavigationProp<AppRoutes>
@@ -77,6 +78,11 @@ export function AppRoutes() {
         options={{
           tabBarIcon: () => <SignOut color="#EE7979" size={iconSize} />,
         }}
+      />
+      <Screen
+        name="product"
+        component={Product}
+        options={{ tabBarButton: () => null }}
       />
     </Navigator>
   )
