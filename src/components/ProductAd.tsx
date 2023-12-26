@@ -11,9 +11,10 @@ import { PressableProps } from 'react-native'
 type Props = PressableProps & {
   name: string
   price: string
-  userImg: string
+  userImg?: string
   isNew: boolean
-  isActive: boolean
+  isActive?: boolean
+  showUser?: boolean
 }
 
 export function ProductAd({
@@ -21,7 +22,8 @@ export function ProductAd({
   price,
   userImg,
   isNew,
-  isActive,
+  isActive = true,
+  showUser = true,
   ...props
 }: Props) {
   return (
@@ -34,20 +36,51 @@ export function ProductAd({
             top={4}
             left={4}
             zIndex={2}
-            borderRadius="$full"
-            borderWidth={1}
-            borderColor="$gray700"
             position="absolute"
+            style={
+              showUser && {
+                borderRadius: 999,
+                borderWidth: 1,
+                borderColor: '$gray700',
+              }
+            }
           >
-            <Image
-              size="full"
-              source={{ uri: 'https://github.com/arthurrios.png' }}
-              alt="User Image"
-              resizeMode="contain"
-              rounded="$full"
-            />
+            {showUser && (
+              <Image
+                size="full"
+                source={{ uri: userImg }}
+                alt="User Image"
+                resizeMode="contain"
+                rounded="$full"
+              />
+            )}
           </View>
 
+          {!isActive && (
+            <>
+              <View
+                position="absolute"
+                zIndex={20}
+                h="$full"
+                w="$full"
+                bgColor="$gray100"
+                opacity={0.45}
+                rounded="$md"
+              />
+              <Text
+                position="absolute"
+                bottom={6}
+                left={8}
+                zIndex={30}
+                color="$gray700"
+                fontFamily="$heading"
+                fontSize="$sm"
+                textTransform="uppercase"
+              >
+                ad disabled
+              </Text>
+            </>
+          )}
           <Image
             w={154}
             h={100}
@@ -81,15 +114,23 @@ export function ProductAd({
           </View>
         </View>
 
-        <Text fontSize="$sm" color="$gray200" mt="$1">
+        <Text fontSize="$sm" color={isActive ? '$gray200' : '$gray400'} mt="$1">
           Red sneakers
         </Text>
 
         <HStack gap="$1">
-          <Text fontFamily="$heading" fontSize="$sm" color="$gray100">
+          <Text
+            fontFamily={isActive ? '$heading' : '$body'}
+            fontSize="$sm"
+            color={isActive ? '$gray100' : '$gray400'}
+          >
             $
           </Text>
-          <Text fontFamily="$heading" fontSize="$md" color="$gray100">
+          <Text
+            fontFamily={isActive ? '$heading' : '$body'}
+            fontSize="$md"
+            color={isActive ? '$gray100' : '$gray400'}
+          >
             26,30
           </Text>
         </HStack>
