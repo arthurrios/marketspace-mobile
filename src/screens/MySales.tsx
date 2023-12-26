@@ -1,3 +1,4 @@
+import { ProductAd } from '@components/ProductAd'
 import {
   ChevronDownIcon,
   HStack,
@@ -55,7 +56,6 @@ export function MySales() {
               borderTopRightRadius={6}
               borderBottomRightRadius={6}
               borderBottomLeftRadius={6}
-              sx={{}}
             >
               <SelectItem label="All" value="all" />
               <SelectItem label="Active" value="active" />
@@ -63,6 +63,13 @@ export function MySales() {
             </SelectContent>
           </SelectPortal>
         </Select>
+      </HStack>
+      <HStack mt="$5" gap="$6" flexWrap="wrap" justifyContent="space-between">
+        <ProductAd isNew showUser={false} />
+        <ProductAd isNew showUser={false} />
+        <ProductAd showUser={false} />
+        <ProductAd isActive={false} showUser={false} />
+        <ProductAd isActive={false} isNew showUser={false} />
       </HStack>
     </VStack>
   )

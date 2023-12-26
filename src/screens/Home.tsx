@@ -139,7 +139,7 @@ export function Home() {
           </VStack>
 
           <HStack gap="$6" flexWrap="wrap" justifyContent="space-between">
-            <ProductAd />
+            <ProductAd userImg="https://github.com/arthurrios.png" />
             <ProductAd />
             <ProductAd />
             <ProductAd />
