@@ -2,52 +2,16 @@ import { Carousel } from '@components/Carousel'
 import { HStack, Pressable, VStack, View, Image } from '@gluestack-ui/themed'
 import { useNavigation } from '@react-navigation/native'
 import { ArrowLeft } from 'phosphor-react-native'
-import { useRef } from 'react'
-import { Animated, Dimensions } from 'react-native'
-// import Carousel from 'react-native-reanimated-carousel'
+import { useState } from 'react'
 
 export function Product() {
-  const images = [
-    {
-      title: 'Item 1',
-      illustration:
-        'https://cdn.awsli.com.br/600x450/898/898976/produto/179244327/294b1a3557.jpg',
-    },
-    {
-      title: 'Item 2',
-      illustration:
-        'https://alexander-kay.com/cdn/shop/products/ak_w_dressed_wineredsuede_01_800x.jpg?v=1590234374',
-    },
-    {
-      title: 'Item 3',
-      illustration:
-        'https://alexander-kay.com/cdn/shop/products/ak_w_dressed_wineredsuede_01_800x.jpg?v=1590234374',
-    },
-  ]
-
-  const carouselRef = useRef(null)
-  const scrollX = useRef(new Animated.Value(0)).current
-
-  const width = Dimensions.get('window').width
+  const [data, setData] = useState([
+    'https://cdn.awsli.com.br/600x450/898/898976/produto/179244327/294b1a3557.jpg',
+    'https://m.economictimes.com/thumb/msid-103070960,width-1200,height-1200,resizemode-4,imgsize-18652/classic-sneakers-for-men-under.jpg',
+    'https://img.ltwebstatic.com/images3_pi/2023/07/10/16889910373ac9d3cca66caad2bec21a25d7e50095_thumbnail_720x.jpg',
+  ])
 
   const navigation = useNavigation()
-
-  function handleOnScroll(event: UIEvent<HTMLElement>) {
-    Animated.event(
-      [
-        {
-          nativeEvent: {
-            contentOffset: {
-              x: scrollX,
-            },
-          },
-        },
-      ],
-      {
-        useNativeDriver: false,
-      },
-    )(event)
-  }
 
   function handleGoBack() {
     navigation.goBack()
@@ -60,7 +24,7 @@ export function Product() {
           <ArrowLeft />
         </Pressable>
       </HStack>
-      <Carousel />
+      <Carousel data={data} />
     </VStack>
   )
 }
