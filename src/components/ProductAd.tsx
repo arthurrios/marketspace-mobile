@@ -118,10 +118,11 @@ export function ProductAd({
           Red sneakers
         </Text>
 
-        <HStack gap="$1">
+        <HStack gap="$1" alignItems="flex-end">
           <Text
             fontFamily={isActive ? '$heading' : '$body'}
-            fontSize="$sm"
+            fontSize="$xs"
+            mb={-1}
             color={isActive ? '$gray100' : '$gray400'}
           >
             $

@@ -2,6 +2,7 @@ import { Button } from '@components/Button'
 import { ConditionTag } from '@components/ConditionTag'
 import { Input } from '@components/Input'
 import { ProductAd } from '@components/ProductAd'
+import { UserImage } from '@components/UserImage'
 import {
   Checkbox,
   CheckboxIcon,
@@ -65,26 +66,11 @@ export function Home() {
         <HStack w="$full" justifyContent="space-between" gap="$2">
           <Pressable>
             <HStack flex={1} w={200} gap={10}>
-              <View
-                w={45}
-                h={45}
-                borderRadius="$full"
-                bgColor="$gray500"
-                borderColor="$blueLight"
-                borderWidth={2}
-                position="relative"
-                alignItems="center"
-                justifyContent="center"
-              >
-                {/* <User size={22} color="#9F9BA1" weight="bold" /> */}
-                <Image
-                  source={{ uri: 'https://github.com/arthurrios.png' }}
-                  alt="User photo"
-                  resizeMode="contain"
-                  rounded="$full"
-                  size="full"
-                />
-              </View>
+              <UserImage
+                height={45}
+                width={45}
+                uri="https://github.com/arthurrios.png"
+              />
               <VStack>
                 <Text color="$gray100">Welcome,</Text>
                 <Text fontFamily="$heading">Arthur!</Text>
@@ -264,7 +250,7 @@ export function Home() {
                           Credit Card
                         </CheckboxLabel>
                       </Checkbox>
-                      <Checkbox value="Bank Deposit" aria-label="back deposit">
+                      <Checkbox value="Bank Deposit" aria-label="bank deposit">
                         <CheckboxIndicator mr="$2">
                           <CheckboxIcon as={Check} />
                         </CheckboxIndicator>

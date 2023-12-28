@@ -5,6 +5,7 @@ import {
   ButtonText,
   Button as GluestackButton,
 } from '@gluestack-ui/themed'
+import { ReactNode } from 'react'
 import { ButtonProps } from 'react-native'
 
 type Props = ButtonProps & {
@@ -12,6 +13,7 @@ type Props = ButtonProps & {
   variant?: 'primary' | 'secondary' | 'tertiary'
   icon?: React.ComponentType<any>
   hasIcon?: boolean
+  childrenIcon?: ReactNode
 }
 
 export function Button({
@@ -19,6 +21,7 @@ export function Button({
   variant = 'primary',
   icon,
   hasIcon = false,
+  childrenIcon,
   ...props
 }: Props) {
   return (
@@ -33,8 +36,8 @@ export function Button({
               : '$gray500'
         }
         borderRadius={6}
-        sx={{ paddingHorizontal: 0 }}
         w="$full"
+        sx={{ paddingHorizontal: 0 }}
         alignItems="center"
         {...props}
       >
@@ -45,6 +48,7 @@ export function Button({
             mr={8}
           />
         ) : null}
+        {childrenIcon}
         <ButtonText
           textAlign="center"
           color={variant === 'tertiary' ? '$gray200' : '$gray700'}
