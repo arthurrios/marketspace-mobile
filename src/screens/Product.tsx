@@ -1,9 +1,10 @@
+import { Carousel } from '@components/Carousel'
 import { HStack, Pressable, VStack, View, Image } from '@gluestack-ui/themed'
 import { useNavigation } from '@react-navigation/native'
 import { ArrowLeft } from 'phosphor-react-native'
 import { useRef } from 'react'
 import { Animated, Dimensions } from 'react-native'
-import Carousel from 'react-native-reanimated-carousel'
+// import Carousel from 'react-native-reanimated-carousel'
 
 export function Product() {
   const images = [
@@ -59,45 +60,7 @@ export function Product() {
           <ArrowLeft />
         </Pressable>
       </HStack>
-      <View flex={1}>
-        <Carousel
-          ref={carouselRef}
-          loop={false}
-          width={width}
-          height={316}
-          data={images}
-          renderItem={({ item, index }) => (
-            <View h="$full" w="$full">
-              <Image
-                w="$full"
-                flex={1}
-                alt=""
-                source={{ uri: item.illustration }}
-              />
-              <HStack
-                position="absolute"
-                zIndex={20}
-                h={6}
-                gap={6}
-                w="$full"
-                bottom={6}
-                mx={6}
-              >
-                {images.map((_, index) => {
-                  return (
-                    <View
-                      key={index}
-                      flex={1}
-                      borderRadius="$full"
-                      backgroundColor="$gray700"
-                    ></View>
-                  )
-                })}
-              </HStack>
-            </View>
-          )}
-        />
-      </View>
+      <Carousel />
     </VStack>
   )
 }

@@ -3,7 +3,7 @@ import { ReactNode } from 'react'
 
 interface InputProps {
   placeholder: string
-  children: ReactNode
+  children?: ReactNode
 }
 
 export function Input({ placeholder, children }: InputProps) {
