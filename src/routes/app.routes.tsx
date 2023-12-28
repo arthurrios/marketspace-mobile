@@ -82,7 +82,7 @@ export function AppRoutes() {
       <Screen
         name="product"
         component={Product}
-        options={{ tabBarButton: () => null }}
+        options={{ tabBarButton: () => null, tabBarStyle: { display: 'none' } }}
       />
     </Navigator>
   )

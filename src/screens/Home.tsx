@@ -48,7 +48,6 @@ export function Home() {
     'Purple Sneakers',
     'Orange Sneakers',
     'Black Sneakers',
-    'White Sneakers',
   ])
 
   const [isNew, setIsNew] = useState(true)
@@ -61,13 +60,8 @@ export function Home() {
   }
 
   return (
-    <ScrollView
-      bgColor="$gray600"
-      px="$6"
-      contentContainerStyle={{ flexGrow: 1 }}
-      showsVerticalScrollIndicator={false}
-    >
-      <View gap="$8" py={72}>
+    <VStack bgColor="$gray600" px="$6">
+      <View gap="$8" pt={72} pb="$6">
         <HStack w="$full" justifyContent="space-between" gap="$2">
           <Pressable>
             <HStack flex={1} w={200} gap={10}>
@@ -156,24 +150,6 @@ export function Home() {
               </HStack>
             </Input>
           </VStack>
-
-          <FlatList
-            data={products}
-            keyExtractor={(item) => item}
-            renderItem={({ item }) => (
-              <ProductAd
-                userImg="https://github.com/arthurrios.png"
-                onPress={handleOpenProductDetails}
-              />
-            )}
-            showsHorizontalScrollIndicator={false}
-            columnWrapperStyle={{
-              flexWrap: 'wrap',
-              justifyContent: 'space-between',
-            }}
-            numColumns={2}
-            contentContainerStyle={{ gap: 24 }}
-          />
         </VStack>
 
         <Modal
@@ -310,6 +286,27 @@ export function Home() {
           </ModalContent>
         </Modal>
       </View>
-    </ScrollView>
+
+      <FlatList
+        data={products}
+        keyExtractor={(item) => item}
+        renderItem={({ item }) => (
+          <ProductAd
+            userImg="https://github.com/arthurrios.png"
+            onPress={handleOpenProductDetails}
+          />
+        )}
+        columnWrapperStyle={{
+          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+        }}
+        numColumns={2}
+        contentContainerStyle={{
+          gap: 24,
+          flexGrow: 1,
+          paddingBottom: 450,
+        }}
+      />
+    </VStack>
   )
 }

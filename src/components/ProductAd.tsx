@@ -29,7 +29,7 @@ export function ProductAd({
   return (
     <Pressable {...props}>
       <VStack>
-        <View position="relative" w={154} h={100} rounded="$md">
+        <View position="relative" w={154} rounded="$md">
           <View
             h="$6"
             w="$6"
