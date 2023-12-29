@@ -39,6 +39,7 @@ export function Button({
         w="$full"
         sx={{ paddingHorizontal: 0 }}
         alignItems="center"
+        justifyContent="center"
         {...props}
       >
         {hasIcon ? (

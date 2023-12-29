@@ -8,12 +8,14 @@ import { Product } from '@screens/Product'
 import { Platform } from 'react-native'
 import { House, SignOut, Tag } from 'phosphor-react-native'
 import { View } from '@gluestack-ui/themed'
+import { MyProduct } from '@screens/MyProduct'
 
 type AppRoutes = {
   home: undefined
   mySales: undefined
   logOut: undefined
   product: undefined
+  myProduct: undefined
 }
 
 export type AppNavigationRoutesProps = BottomTabNavigationProp<AppRoutes>
@@ -82,6 +84,11 @@ export function AppRoutes() {
       <Screen
         name="product"
         component={Product}
+        options={{ tabBarButton: () => null, tabBarStyle: { display: 'none' } }}
+      />
+      <Screen
+        name="myProduct"
+        component={MyProduct}
         options={{ tabBarButton: () => null, tabBarStyle: { display: 'none' } }}
       />
     </Navigator>

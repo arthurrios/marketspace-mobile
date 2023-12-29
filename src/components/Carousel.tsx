@@ -1,4 +1,4 @@
-import { FlatList, HStack, Image, View } from '@gluestack-ui/themed'
+import { FlatList, HStack, Image, Text, View } from '@gluestack-ui/themed'
 import { useRef } from 'react'
 import {
   Animated,
@@ -9,7 +9,12 @@ import {
 
 const { width } = Dimensions.get('screen')
 
-export function Carousel({ data }) {
+interface CarouselProps {
+  images: string[]
+  adIsActive: boolean
+}
+
+export function Carousel({ images, adIsActive }: CarouselProps) {
   const scrollX = useRef(new Animated.Value(0)).current
   function handleOnScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
     Animated.event(
@@ -30,8 +35,33 @@ export function Carousel({ data }) {
 
   return (
     <View>
+      {!adIsActive && (
+        <View position="absolute" zIndex={10} h={280} w="$full">
+          <View
+            position="relative"
+            zIndex={20}
+            bgColor="$gray100"
+            opacity={0.6}
+            h="$full"
+            w="$full"
+            alignItems="center"
+            justifyContent="center"
+          />
+          <Text
+            fontFamily="$heading"
+            textTransform="uppercase"
+            color="$gray700"
+            position="absolute"
+            left={148}
+            top="50%"
+            zIndex={30}
+          >
+            ad disabled
+          </Text>
+        </View>
+      )}
       <FlatList
-        data={data}
+        data={images}
         keyExtractor={(item) => item}
         renderItem={({ item }) => (
           <Image
@@ -58,7 +88,7 @@ export function Carousel({ data }) {
         left={6}
         gap={6}
       >
-        {data.map((_, index) => {
+        {images.map((_, index) => {
           const inputRange = [
             (index - 1) * width,
             index * width,

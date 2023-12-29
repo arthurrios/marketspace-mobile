@@ -9,13 +9,18 @@ import {
   View,
   ScrollView,
   Text,
-  FlatList,
 } from '@gluestack-ui/themed'
 import { useNavigation } from '@react-navigation/native'
-import { ArrowLeft, WhatsappLogo } from 'phosphor-react-native'
+import { AppNavigationRoutesProps } from '@routes/app.routes'
+import {
+  ArrowLeft,
+  Power,
+  TrashSimple,
+  WhatsappLogo,
+} from 'phosphor-react-native'
 import { useState } from 'react'
 
-export function Product() {
+export function MyProduct() {
   const [images, setImages] = useState([
     'https://cdn.awsli.com.br/600x450/898/898976/produto/179244327/294b1a3557.jpg',
     'https://m.economictimes.com/thumb/msid-103070960,width-1200,height-1200,resizemode-4,imgsize-18652/classic-sneakers-for-men-under.jpg',
@@ -31,10 +36,12 @@ export function Product() {
     'bankDeposit',
   ])
 
-  const navigation = useNavigation()
+  const [adIsActive, setAdIsActive] = useState(false)
+
+  const navigation = useNavigation<AppNavigationRoutesProps>()
 
   function handleGoBack() {
-    navigation.goBack()
+    navigation.navigate('mySales')
   }
 
   return (
@@ -44,9 +51,9 @@ export function Product() {
           <ArrowLeft />
         </Pressable>
       </HStack>
-      <Carousel images={images} />
+      <Carousel images={images} adIsActive={adIsActive} />
       <ScrollView px="$6" py="$5" flex={1}>
-        <VStack gap="$6" pb="$16">
+        <VStack gap="$6" pb="$2">
           <HStack gap="$2" alignItems="center">
             <UserImage
               height={24}
@@ -111,36 +118,37 @@ export function Product() {
               })}
             </VStack>
           </VStack>
+          <VStack gap="$2" mb={50} bgColor="$gray600">
+            {!adIsActive ? (
+              <Button
+                title="Reactivate ad"
+                childrenIcon={
+                  <Power color="#EDECEE" size={16} style={{ marginRight: 8 }} />
+                }
+              />
+            ) : (
+              <Button
+                variant="secondary"
+                title="Disable ad"
+                childrenIcon={
+                  <Power color="#EDECEE" size={16} style={{ marginRight: 8 }} />
+                }
+              />
+            )}
+            <Button
+              variant="tertiary"
+              title="Delete ad"
+              childrenIcon={
+                <TrashSimple
+                  color="#3E3A40"
+                  size={16}
+                  style={{ marginRight: 8 }}
+                />
+              }
+            />
+          </VStack>
         </VStack>
       </ScrollView>
-      <HStack
-        p="$6"
-        pb={28}
-        pt="$5"
-        bgColor="$gray700"
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <HStack gap={6} alignItems="flex-end" flex={1}>
-          <Text fontSize="$sm" fontFamily="$heading" color="$blue">
-            $
-          </Text>
-          <Text fontSize="$2xl" fontFamily="$heading" color="$blue">
-            26,30
-          </Text>
-        </HStack>
-        <Button
-          childrenIcon={
-            <WhatsappLogo
-              size={16}
-              color="#F7F7F8"
-              weight="fill"
-              style={{ marginRight: 8 }}
-            />
-          }
-          title="Message"
-        />
-      </HStack>
     </VStack>
   )
 }

@@ -1,6 +1,7 @@
 import { ProductAd } from '@components/ProductAd'
 import {
   ChevronDownIcon,
+  FlatList,
   HStack,
   Icon,
   Pressable,
@@ -15,9 +16,27 @@ import {
   Text,
   VStack,
 } from '@gluestack-ui/themed'
+import { useNavigation } from '@react-navigation/native'
+import { AppNavigationRoutesProps } from '@routes/app.routes'
 import { Plus } from 'phosphor-react-native'
+import { useState } from 'react'
 
 export function MySales() {
+  const [myProducts, setMyProducts] = useState([
+    'Red Sneakers',
+    'Blue Sneakers',
+    'Green Sneakers',
+    'Purple Sneakers',
+    'Orange Sneakers',
+    'Black Sneakers',
+  ])
+
+  const navigation = useNavigation<AppNavigationRoutesProps>()
+
+  function handleOpenProductDetails() {
+    navigation.navigate('myProduct')
+  }
+
   return (
     <VStack bgColor="$gray600" flex={1} py="$20" px="$6">
       <HStack alignItems="center" justifyContent="center" mb="$8">
@@ -65,11 +84,23 @@ export function MySales() {
         </Select>
       </HStack>
       <HStack mt="$5" gap="$6" flexWrap="wrap" justifyContent="space-between">
-        <ProductAd isNew showUser={false} />
-        <ProductAd isNew showUser={false} />
-        <ProductAd showUser={false} />
-        <ProductAd isActive={false} showUser={false} />
-        <ProductAd isActive={false} isNew showUser={false} />
+        <FlatList
+          data={myProducts}
+          keyExtractor={(item) => item}
+          renderItem={({ item }) => (
+            <ProductAd showUser={false} onPress={handleOpenProductDetails} />
+          )}
+          columnWrapperStyle={{
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+          }}
+          numColumns={2}
+          contentContainerStyle={{
+            gap: 24,
+            flexGrow: 1,
+            paddingBottom: 450,
+          }}
+        />
       </HStack>
     </VStack>
   )
