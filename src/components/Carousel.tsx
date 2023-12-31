@@ -11,7 +11,7 @@ const { width } = Dimensions.get('screen')
 
 interface CarouselProps {
   images: string[]
-  adIsActive: boolean
+  adIsActive?: boolean
 }
 
 export function Carousel({ images, adIsActive }: CarouselProps) {

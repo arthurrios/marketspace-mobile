@@ -9,6 +9,7 @@ import { Platform } from 'react-native'
 import { House, SignOut, Tag } from 'phosphor-react-native'
 import { View } from '@gluestack-ui/themed'
 import { MyProduct } from '@screens/MyProduct'
+import { CreateAd } from '@screens/CreateAd'
 
 type AppRoutes = {
   home: undefined
@@ -16,6 +17,7 @@ type AppRoutes = {
   logOut: undefined
   product: undefined
   myProduct: undefined
+  createAd: undefined
 }
 
 export type AppNavigationRoutesProps = BottomTabNavigationProp<AppRoutes>
@@ -89,6 +91,11 @@ export function AppRoutes() {
       <Screen
         name="myProduct"
         component={MyProduct}
+        options={{ tabBarButton: () => null, tabBarStyle: { display: 'none' } }}
+      />
+      <Screen
+        name="createAd"
+        component={CreateAd}
         options={{ tabBarButton: () => null, tabBarStyle: { display: 'none' } }}
       />
     </Navigator>

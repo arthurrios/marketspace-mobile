@@ -9,7 +9,6 @@ import {
   CheckboxIndicator,
   CheckboxGroup,
   HStack,
-  Image,
   Modal,
   ModalBackdrop,
   ModalBody,
@@ -17,7 +16,6 @@ import {
   ModalContent,
   ModalHeader,
   Pressable,
-  ScrollView,
   Switch,
   Text,
   VStack,
@@ -56,6 +54,10 @@ export function Home() {
 
   const navigation = useNavigation<AppNavigationRoutesProps>()
 
+  function handleCreateNewAd() {
+    navigation.navigate('createAd')
+  }
+
   function handleOpenProductDetails() {
     navigation.navigate('product')
   }
@@ -78,7 +80,13 @@ export function Home() {
             </HStack>
           </Pressable>
 
-          <Button title="Create Ad" icon={Plus} variant="secondary" hasIcon />
+          <Button
+            title="Create Ad"
+            icon={Plus}
+            variant="secondary"
+            hasIcon
+            onPress={handleCreateNewAd}
+          />
         </HStack>
 
         <VStack gap="$3">

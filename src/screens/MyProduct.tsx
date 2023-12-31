@@ -14,6 +14,7 @@ import { useNavigation } from '@react-navigation/native'
 import { AppNavigationRoutesProps } from '@routes/app.routes'
 import {
   ArrowLeft,
+  PencilSimpleLine,
   Power,
   TrashSimple,
   WhatsappLogo,
@@ -36,7 +37,7 @@ export function MyProduct() {
     'bankDeposit',
   ])
 
-  const [adIsActive, setAdIsActive] = useState(false)
+  const [adIsActive, setAdIsActive] = useState(true)
 
   const navigation = useNavigation<AppNavigationRoutesProps>()
 
@@ -46,9 +47,12 @@ export function MyProduct() {
 
   return (
     <VStack flex={1} bgColor="$gray600" pt="$16">
-      <HStack px="$6" pb="$3">
+      <HStack px="$6" pb="$3" justifyContent="space-between">
         <Pressable onPress={handleGoBack}>
           <ArrowLeft />
+        </Pressable>
+        <Pressable>
+          <PencilSimpleLine />
         </Pressable>
       </HStack>
       <Carousel images={images} adIsActive={adIsActive} />
