@@ -1,48 +1,35 @@
-import { Button } from '@components/Button'
-import { Carousel } from '@components/Carousel'
-import { PaymentTag } from '@components/PaymentTag'
-import { UserImage } from '@components/UserImage'
-import {
-  HStack,
-  Pressable,
-  VStack,
-  View,
-  ScrollView,
-  Text,
-} from '@gluestack-ui/themed'
-import { useNavigation } from '@react-navigation/native'
-import { AppNavigationRoutesProps } from '@routes/app.routes'
-import {
-  ArrowLeft,
-  PencilSimpleLine,
-  Power,
-  Tag,
-  TrashSimple,
-} from 'phosphor-react-native'
-import { useState } from 'react'
+import { Button } from "@components/Button";
+import { Carousel } from "@components/Carousel";
+import { PaymentTag } from "@components/PaymentTag";
+import { UserImage } from "@components/UserImage";
+import { HStack, VStack, View, ScrollView, Text } from "@gluestack-ui/themed";
+import { useNavigation } from "@react-navigation/native";
+import { AppNavigationRoutesProps } from "@routes/app.routes";
+import { ArrowLeft, Power, Tag, TrashSimple } from "phosphor-react-native";
+import { useState } from "react";
 
 export function AdPreview() {
   const [images, setImages] = useState([
-    'https://cdn.awsli.com.br/600x450/898/898976/produto/179244327/294b1a3557.jpg',
-    'https://m.economictimes.com/thumb/msid-103070960,width-1200,height-1200,resizemode-4,imgsize-18652/classic-sneakers-for-men-under.jpg',
-    'https://img.ltwebstatic.com/images3_pi/2023/07/10/16889910373ac9d3cca66caad2bec21a25d7e50095_thumbnail_720x.jpg',
-  ])
-  const [isNew, setIsNew] = useState(false)
-  const [acceptTrade, setAcceptTrade] = useState(true)
+    "https://cdn.awsli.com.br/600x450/898/898976/produto/179244327/294b1a3557.jpg",
+    "https://m.economictimes.com/thumb/msid-103070960,width-1200,height-1200,resizemode-4,imgsize-18652/classic-sneakers-for-men-under.jpg",
+    "https://img.ltwebstatic.com/images3_pi/2023/07/10/16889910373ac9d3cca66caad2bec21a25d7e50095_thumbnail_720x.jpg",
+  ]);
+  const [isNew, setIsNew] = useState(false);
+  const [acceptTrade, setAcceptTrade] = useState(true);
   const [paymentMethods, setPaymentMethods] = useState([
-    'voucher',
-    'pix',
-    'cash',
-    'creditCard',
-    'bankDeposit',
-  ])
+    "voucher",
+    "pix",
+    "cash",
+    "creditCard",
+    "bankDeposit",
+  ]);
 
-  const [adIsActive, setAdIsActive] = useState(true)
+  const [adIsActive, setAdIsActive] = useState(true);
 
-  const navigation = useNavigation<AppNavigationRoutesProps>()
+  const navigation = useNavigation<AppNavigationRoutesProps>();
 
   function handleGoBack() {
-    navigation.goBack()
+    navigation.goBack();
   }
 
   return (
@@ -81,7 +68,7 @@ export function AdPreview() {
                     color="$gray200"
                     textTransform="uppercase"
                   >
-                    {isNew ? 'new' : 'used'}
+                    {isNew ? "new" : "used"}
                   </Text>
                 </View>
               </HStack>
@@ -113,13 +100,13 @@ export function AdPreview() {
             <VStack gap="$4">
               <HStack gap="$2">
                 <Text fontFamily="$heading">Accept Trade?</Text>
-                <Text>{acceptTrade ? 'Yes' : 'No'}</Text>
+                <Text>{acceptTrade ? "Yes" : "No"}</Text>
               </HStack>
               <VStack gap="$2">
                 <Text fontFamily="$heading">Payment methods:</Text>
 
                 {paymentMethods.map((item, index) => {
-                  return <PaymentTag key={index} type={item} />
+                  return <PaymentTag key={index} type={item} />;
                 })}
               </VStack>
             </VStack>
@@ -178,5 +165,5 @@ export function AdPreview() {
         />
       </HStack>
     </>
-  )
+  );
 }

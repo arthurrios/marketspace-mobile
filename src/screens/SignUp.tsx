@@ -3,17 +3,75 @@ import {
   Pressable,
   ScrollView,
   Text,
+  ToastDescription,
+  ToastTitle,
   VStack,
   View,
+  useToast,
+  Toast,
+  Image,
 } from '@gluestack-ui/themed'
+import { useState } from 'react'
+import { useNavigation } from '@react-navigation/native'
 import LogoSvg from '@assets/logo.svg'
 import { PencilSimpleLine, User } from 'phosphor-react-native'
 import { Input } from '@components/Input'
 import { InputPassword } from '@components/InputPassword'
 import { Button } from '@components/Button'
-import { useNavigation } from '@react-navigation/native'
+import * as ImagePicker from 'expo-image-picker'
+import * as FileSystem from 'expo-file-system'
 
 export function SignUp() {
+  const [photoIsLoading, setPhotoIsLoading] = useState(false)
+  const [userPhoto, setUserPhoto] = useState('')
+  const toast = useToast()
+
+  async function handleUserPhotoSelect() {
+    setPhotoIsLoading(true)
+
+    try {
+      const photoSelected = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+        aspect: [4, 4],
+        allowsEditing: true,
+      })
+
+      if (photoSelected.canceled) return
+
+      if (photoSelected.assets[0].uri) {
+        const photoInfo = await FileSystem.getInfoAsync(
+          photoSelected.assets[0].uri,
+        )
+
+        if (photoInfo.exists && photoInfo.size / 1024 / 1024 > 5) {
+          return toast.show({
+            placement: 'top',
+            render: ({ id }) => {
+              const toastId = 'toast-' + id
+              return (
+                <Toast nativeID={toastId} action="attention" variant="solid">
+                  <VStack space="xs">
+                    <ToastTitle>Image Size</ToastTitle>
+                    <ToastDescription>
+                      This image is too large. Choose an image up to 5MB.
+                    </ToastDescription>
+                  </VStack>
+                </Toast>
+              )
+            },
+          })
+        }
+
+        setUserPhoto(photoSelected.assets[0].uri)
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setPhotoIsLoading(false)
+    }
+  }
+
   const navigation = useNavigation()
 
   function handleGoBack() {
@@ -37,7 +95,7 @@ export function SignUp() {
             sell your products
           </Text>
           <VStack mt="$8" gap="$4" w="$full" alignItems="center">
-            <Pressable>
+            <Pressable onPress={handleUserPhotoSelect}>
               <View
                 w={88}
                 h={88}
@@ -49,11 +107,20 @@ export function SignUp() {
                 alignItems="center"
                 justifyContent="center"
               >
-                <User size={44} color="#9F9BA1" weight="bold" />
+                {userPhoto ? (
+                  <Image
+                    alt=""
+                    source={{ uri: userPhoto }}
+                    resizeMode="cover"
+                    borderRadius={999}
+                  />
+                ) : (
+                  <User size={44} color="#9F9BA1" weight="bold" />
+                )}
                 <View
                   position="absolute"
-                  w="$10"
-                  h="$10"
+                  w="$8"
+                  h="$8"
                   borderRadius="$full"
                   bgColor="$blueLight"
                   right={-4}
