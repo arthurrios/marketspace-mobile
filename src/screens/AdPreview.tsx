@@ -17,11 +17,10 @@ import {
   PencilSimpleLine,
   Power,
   TrashSimple,
-  WhatsappLogo,
 } from 'phosphor-react-native'
 import { useState } from 'react'
 
-export function MyProduct() {
+export function AdPreview() {
   const [images, setImages] = useState([
     'https://cdn.awsli.com.br/600x450/898/898976/produto/179244327/294b1a3557.jpg',
     'https://m.economictimes.com/thumb/msid-103070960,width-1200,height-1200,resizemode-4,imgsize-18652/classic-sneakers-for-men-under.jpg',
@@ -42,11 +41,7 @@ export function MyProduct() {
   const navigation = useNavigation<AppNavigationRoutesProps>()
 
   function handleGoBack() {
-    navigation.navigate('mySales')
-  }
-
-  function handleEditProduct() {
-    navigation.navigate('editAd')
+    navigation.goBack()
   }
 
   return (
@@ -55,7 +50,7 @@ export function MyProduct() {
         <Pressable onPress={handleGoBack}>
           <ArrowLeft />
         </Pressable>
-        <Pressable onPress={handleEditProduct}>
+        <Pressable>
           <PencilSimpleLine />
         </Pressable>
       </HStack>

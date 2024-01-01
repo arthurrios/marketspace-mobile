@@ -10,19 +10,37 @@ import { House, SignOut, Tag } from 'phosphor-react-native'
 import { View } from '@gluestack-ui/themed'
 import { MyProduct } from '@screens/MyProduct'
 import { CreateAd } from '@screens/CreateAd'
+import { EditAd } from '@screens/EditAd'
+import { AdPreview } from '@screens/AdPreview'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
-type AppRoutes = {
+export type AppRoutes = {
   home: undefined
   mySales: undefined
   logOut: undefined
   product: undefined
   myProduct: undefined
+  nestedRoutes: undefined
   createAd: undefined
+  editAd: undefined
+  adPreview: undefined
 }
 
 export type AppNavigationRoutesProps = BottomTabNavigationProp<AppRoutes>
 
 const { Navigator, Screen } = createBottomTabNavigator<AppRoutes>()
+
+const Stack = createNativeStackNavigator()
+
+export function NestedRoutes() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="createAd" component={CreateAd} />
+      <Stack.Screen name="editAd" component={EditAd} />
+      <Stack.Screen name="adPreview" component={AdPreview} />
+    </Stack.Navigator>
+  )
+}
 
 export function AppRoutes() {
   function LogOut() {
@@ -94,8 +112,8 @@ export function AppRoutes() {
         options={{ tabBarButton: () => null, tabBarStyle: { display: 'none' } }}
       />
       <Screen
-        name="createAd"
-        component={CreateAd}
+        name="nestedRoutes"
+        component={NestedRoutes}
         options={{ tabBarButton: () => null, tabBarStyle: { display: 'none' } }}
       />
     </Navigator>

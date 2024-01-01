@@ -28,7 +28,7 @@ import { AppNavigationRoutesProps } from '@routes/app.routes'
 import { ArrowLeft, Check, Plus, X } from 'phosphor-react-native'
 import { useState } from 'react'
 
-export function CreateAd() {
+export function EditAd() {
   const [images, setImages] = useState([
     'https://cdn.awsli.com.br/600x450/898/898976/produto/179244327/294b1a3557.jpg',
     'https://m.economictimes.com/thumb/msid-103070960,width-1200,height-1200,resizemode-4,imgsize-18652/classic-sneakers-for-men-under.jpg',
@@ -39,7 +39,7 @@ export function CreateAd() {
   const navigation = useNavigation<AppNavigationRoutesProps>()
 
   function handleGoBack() {
-    navigation.goBack()
+    navigation.navigate('myProduct')
   }
 
   function handleGoForward() {
@@ -54,7 +54,7 @@ export function CreateAd() {
             <ArrowLeft />
           </Pressable>
           <Text fontFamily="$heading" fontSize="$xl" color="$gray100">
-            Create ad
+            Edit ad
           </Text>
           <View w="$6" />
         </HStack>

@@ -55,7 +55,7 @@ export function Home() {
   const navigation = useNavigation<AppNavigationRoutesProps>()
 
   function handleCreateNewAd() {
-    navigation.navigate('createAd')
+    navigation.navigate('nestedRoutes', { screen: 'createAd' })
   }
 
   function handleOpenProductDetails() {
