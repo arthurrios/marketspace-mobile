@@ -22,19 +22,24 @@ import {
   VStack,
   View,
   Switch,
+  useToast,
+  ToastDescription,
+  Toast,
+  ToastTitle,
 } from '@gluestack-ui/themed'
+import { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { AppNavigationRoutesProps } from '@routes/app.routes'
 import { ArrowLeft, Check, Plus, X } from 'phosphor-react-native'
-import { useState } from 'react'
+import * as ImagePicker from 'expo-image-picker'
+import * as FileSystem from 'expo-file-system'
 
 export function CreateAd() {
-  const [images, setImages] = useState([
-    'https://cdn.awsli.com.br/600x450/898/898976/produto/179244327/294b1a3557.jpg',
-    'https://m.economictimes.com/thumb/msid-103070960,width-1200,height-1200,resizemode-4,imgsize-18652/classic-sneakers-for-men-under.jpg',
-  ])
+  const [photoIsLoading, setPhotoIsLoading] = useState(false)
+  const [images, setImages] = useState<string[]>([])
   const [values, setValues] = useState('')
   const [paymentMethodsSelected, setPaymentMethodsSelected] = useState([])
+  const toast = useToast()
 
   const navigation = useNavigation<AppNavigationRoutesProps>()
 
@@ -44,6 +49,57 @@ export function CreateAd() {
 
   function handleGoForward() {
     navigation.navigate('adPreview')
+  }
+
+  async function handleUploadProductPictures() {
+    setPhotoIsLoading(true)
+    try {
+      const photosSelected = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+        allowsMultipleSelection: true,
+        selectionLimit: 3,
+      })
+
+      if (photosSelected.canceled) return
+
+      const newImages = photosSelected.assets.map((photo) => photo.uri)
+
+      // You can set a limit on the number of selected photos (e.g., 3)
+      if (images) {
+        if (images.length + newImages.length > 3) {
+          return toast.show({
+            placement: 'top',
+            render: ({ id }) => {
+              const toastId = 'toast-' + id
+              return (
+                <Toast nativeID={toastId} action="attention" variant="solid">
+                  <VStack space="xs">
+                    <ToastTitle>Image Limit</ToastTitle>
+                    <ToastDescription>
+                      You can select up to 3 images.
+                    </ToastDescription>
+                  </VStack>
+                </Toast>
+              )
+            },
+          })
+        }
+        setImages([...images, ...newImages])
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setPhotoIsLoading(false)
+    }
+  }
+
+  function handleRemoveSelectedImage(indexToRemove: number) {
+    if (images) {
+      const updatedImages = [...images]
+      updatedImages.splice(indexToRemove, 1)
+      setImages(updatedImages)
+    }
   }
 
   return (
@@ -70,35 +126,41 @@ export function CreateAd() {
                 </Text>
               </VStack>
               <HStack gap="$4">
-                {images.map((image, index) => {
-                  return (
-                    <View key={index} h={100} w={100} borderRadius={6}>
-                      <Image
-                        h={100}
-                        w={100}
-                        alt=""
-                        source={image}
-                        resizeMode="cover"
-                        borderRadius={6}
-                      />
-                      <Pressable
-                        position="absolute"
-                        bgColor="$gray200"
-                        h="$5"
-                        w="$5"
-                        top="$1"
-                        right="$1"
-                        borderRadius="$full"
-                        justifyContent="center"
-                        alignItems="center"
-                      >
-                        <X size={14} color="#F7F7F8" />
-                      </Pressable>
-                    </View>
-                  )
-                })}
-                {images.length < 3 && (
-                  <Pressable h={100} w={100}>
+                {images &&
+                  images.map((image, index) => {
+                    return (
+                      <View key={index} h={100} w={100} borderRadius={6}>
+                        <Image
+                          h={100}
+                          w={100}
+                          alt=""
+                          source={image}
+                          resizeMode="cover"
+                          borderRadius={6}
+                        />
+                        <Pressable
+                          onPress={() => handleRemoveSelectedImage(index)}
+                          position="absolute"
+                          bgColor="$gray200"
+                          h="$5"
+                          w="$5"
+                          top="$1"
+                          right="$1"
+                          borderRadius="$full"
+                          justifyContent="center"
+                          alignItems="center"
+                        >
+                          <X size={14} color="#F7F7F8" />
+                        </Pressable>
+                      </View>
+                    )
+                  })}
+                {images && images.length < 3 && (
+                  <Pressable
+                    h={100}
+                    w={100}
+                    onPress={handleUploadProductPictures}
+                  >
                     <View
                       h={100}
                       w={100}
