@@ -10,9 +10,16 @@ import { TextInputProps } from 'react-native'
 
 type InputPasswordProps = TextInputProps & {
   placeholder: string
+  onChangeText?: (value: string) => void
+  value?: string
 }
 
-export function InputPassword({ placeholder, ...props }: InputPasswordProps) {
+export function InputPassword({
+  placeholder,
+  onChangeText,
+  value,
+  ...props
+}: InputPasswordProps) {
   const [showPassword, setShowPassword] = useState(false)
   const handleState = () => {
     setShowPassword((showState) => {
@@ -32,6 +39,8 @@ export function InputPassword({ placeholder, ...props }: InputPasswordProps) {
     >
       <InputField
         type={showPassword ? 'text' : 'password'}
+        onChangeText={onChangeText}
+        value={value}
         placeholder={placeholder}
         fontFamily="$body"
         fontSize="$md"

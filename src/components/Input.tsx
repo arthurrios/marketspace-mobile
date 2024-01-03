@@ -3,10 +3,17 @@ import { ReactNode } from 'react'
 
 interface InputProps {
   placeholder: string
+  onChangeText?: (value: string) => void
   children?: ReactNode
+  value?: string
 }
 
-export function Input({ placeholder, children }: InputProps) {
+export function Input({
+  placeholder,
+  onChangeText,
+  value,
+  children,
+}: InputProps) {
   return (
     <GluestackInput
       h={45}
@@ -18,7 +25,13 @@ export function Input({ placeholder, children }: InputProps) {
       borderRadius={6}
       alignItems="center"
     >
-      <InputField placeholder={placeholder} fontFamily="$body" fontSize="$md" />
+      <InputField
+        onChangeText={onChangeText}
+        placeholder={placeholder}
+        fontFamily="$body"
+        fontSize="$md"
+        value={value}
+      />
       {children}
     </GluestackInput>
   )

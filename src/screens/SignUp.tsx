@@ -18,6 +18,7 @@ import { PencilSimpleLine, User } from 'phosphor-react-native'
 import { Input } from '@components/Input'
 import { InputPassword } from '@components/InputPassword'
 import { Button } from '@components/Button'
+import { useForm, Controller } from 'react-hook-form'
 import * as ImagePicker from 'expo-image-picker'
 import * as FileSystem from 'expo-file-system'
 
@@ -25,7 +26,13 @@ export function SignUp() {
   const [photoIsLoading, setPhotoIsLoading] = useState(false)
   const [userPhoto, setUserPhoto] = useState('')
   const toast = useToast()
+  const { control } = useForm()
 
+  const navigation = useNavigation()
+
+  function handleGoBack() {
+    navigation.goBack()
+  }
   async function handleUserPhotoSelect() {
     setPhotoIsLoading(true)
 
@@ -70,12 +77,6 @@ export function SignUp() {
     } finally {
       setPhotoIsLoading(false)
     }
-  }
-
-  const navigation = useNavigation()
-
-  function handleGoBack() {
-    navigation.goBack()
   }
 
   return (
@@ -132,11 +133,63 @@ export function SignUp() {
                 </View>
               </View>
             </Pressable>
-            <Input placeholder="Name" />
-            <Input placeholder="Email" />
-            <Input placeholder="Phone" />
-            <InputPassword placeholder="Password" />
-            <InputPassword placeholder="Confirm Password" />
+            <Controller
+              control={control}
+              name="name"
+              render={({ field: { onChange, value } }) => (
+                <Input
+                  placeholder="Name"
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { onChange, value } }) => (
+                <Input
+                  placeholder="Email"
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="tel"
+              render={({ field: { onChange, value } }) => (
+                <Input
+                  placeholder="Phone"
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange, value } }) => (
+                <InputPassword
+                  placeholder="Password"
+                  onChangeText={onChange}
+                  value={value}
+                  secureTextEntry
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="confirmPassword"
+              render={({ field: { onChange, value } }) => (
+                <InputPassword
+                  placeholder="Confirm Password"
+                  onChangeText={onChange}
+                  value={value}
+                  secureTextEntry
+                />
+              )}
+            />
             <Button variant="secondary" title="Create" />
           </VStack>
         </Center>
