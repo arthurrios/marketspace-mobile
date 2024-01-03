@@ -26,7 +26,7 @@ export function SignUp() {
   const [photoIsLoading, setPhotoIsLoading] = useState(false)
   const [userPhoto, setUserPhoto] = useState('')
   const toast = useToast()
-  const { control } = useForm()
+  const { control, handleSubmit } = useForm()
 
   const navigation = useNavigation()
 
@@ -77,6 +77,10 @@ export function SignUp() {
     } finally {
       setPhotoIsLoading(false)
     }
+  }
+
+  function handleSignUp(data: any) {
+    console.log(data)
   }
 
   return (
@@ -185,12 +189,17 @@ export function SignUp() {
                 <InputPassword
                   placeholder="Confirm Password"
                   onChangeText={onChange}
+                  onSubmitEditing={handleSubmit(handleSignUp)}
                   value={value}
                   secureTextEntry
                 />
               )}
             />
-            <Button variant="secondary" title="Create" />
+            <Button
+              variant="secondary"
+              title="Create"
+              onPress={handleSubmit(handleSignUp)}
+            />
           </VStack>
         </Center>
         <Center mb={16}>
