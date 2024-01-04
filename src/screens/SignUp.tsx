@@ -21,12 +21,50 @@ import { Button } from '@components/Button'
 import { useForm, Controller } from 'react-hook-form'
 import * as ImagePicker from 'expo-image-picker'
 import * as FileSystem from 'expo-file-system'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+
+type FormDataProps = {
+  avatar: string
+  name: string
+  email: string
+  tel: string
+  password: string
+  confirmPassword: string
+}
+
+const signUpSchema = z
+  .object({
+    name: z.string().min(1, { message: 'Enter a name' }),
+    email: z
+      .string()
+      .min(1, { message: 'Enter an email' })
+      .email({ message: 'Invalid email' }),
+    tel: z
+      .string()
+      .min(12, { message: 'Enter a phone number: DDI+DDD+9 digit number' })
+      .max(13, { message: 'Enter a phone number: DDI+DDD+9 digit number' }),
+    password: z
+      .string()
+      .min(6, { message: 'Password must be at least 6 characters' }),
+    confirmPassword: z.string().min(1, { message: 'Confirm password' }),
+  })
+  .refine((data) => data.confirmPassword === data.password, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  })
 
 export function SignUp() {
   const [photoIsLoading, setPhotoIsLoading] = useState(false)
-  const [userPhoto, setUserPhoto] = useState('')
+  const [userPhoto, setUserPhoto] = useState<ImagePicker.ImagePickerAsset>()
   const toast = useToast()
-  const { control, handleSubmit } = useForm()
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormDataProps>({
+    resolver: zodResolver(signUpSchema),
+  })
 
   const navigation = useNavigation()
 
@@ -57,7 +95,7 @@ export function SignUp() {
             render: ({ id }) => {
               const toastId = 'toast-' + id
               return (
-                <Toast nativeID={toastId} action="attention" variant="solid">
+                <Toast nativeID={toastId} action="error" variant="solid">
                   <VStack space="xs">
                     <ToastTitle>Image Size</ToastTitle>
                     <ToastDescription>
@@ -70,7 +108,7 @@ export function SignUp() {
           })
         }
 
-        setUserPhoto(photoSelected.assets[0].uri)
+        setUserPhoto(photoSelected.assets[0])
       }
     } catch (error) {
       console.log(error)
@@ -79,8 +117,42 @@ export function SignUp() {
     }
   }
 
-  function handleSignUp(data: any) {
-    console.log(data)
+  async function handleSignUp({ name, email, tel, password }: FormDataProps) {
+    try {
+      if (userPhoto) {
+        const fileExtension = userPhoto.uri.split('.').pop()
+
+        const photoFile = {
+          name: `${name.replace(/\s+/g, '')}.${fileExtension}`.toLowerCase(),
+          uri: userPhoto.uri,
+          type: `${userPhoto.type}/${fileExtension}`,
+        } as any
+        const formData = new FormData()
+        formData.append('avatar', photoFile)
+        formData.append('name', name)
+        formData.append('email', email)
+        formData.append('tel', tel)
+        formData.append('password', password)
+        console.log(formData)
+      } else {
+        return toast.show({
+          placement: 'top',
+          render: ({ id }) => {
+            const toastId = 'toast-' + id
+            return (
+              <Toast nativeID={toastId} action="warning" variant="outline">
+                <VStack space="xs">
+                  <ToastTitle>Profile Image Missing</ToastTitle>
+                  <ToastDescription>Choose a profile image.</ToastDescription>
+                </VStack>
+              </Toast>
+            )
+          },
+        })
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -115,7 +187,7 @@ export function SignUp() {
                 {userPhoto ? (
                   <Image
                     alt=""
-                    source={{ uri: userPhoto }}
+                    source={{ uri: userPhoto.uri }}
                     resizeMode="cover"
                     borderRadius={999}
                   />
@@ -145,6 +217,7 @@ export function SignUp() {
                   placeholder="Name"
                   onChangeText={onChange}
                   value={value}
+                  errorMessage={errors.name?.message}
                 />
               )}
             />
@@ -156,6 +229,9 @@ export function SignUp() {
                   placeholder="Email"
                   onChangeText={onChange}
                   value={value}
+                  errorMessage={errors.email?.message}
+                  autoCapitalize="none"
+                  style={{ textTransform: 'lowercase' }}
                 />
               )}
             />
@@ -167,6 +243,7 @@ export function SignUp() {
                   placeholder="Phone"
                   onChangeText={onChange}
                   value={value}
+                  errorMessage={errors.tel?.message}
                 />
               )}
             />
@@ -178,6 +255,7 @@ export function SignUp() {
                   placeholder="Password"
                   onChangeText={onChange}
                   value={value}
+                  errorMessage={errors.password?.message}
                   secureTextEntry
                 />
               )}
@@ -191,6 +269,7 @@ export function SignUp() {
                   onChangeText={onChange}
                   onSubmitEditing={handleSubmit(handleSignUp)}
                   value={value}
+                  errorMessage={errors.confirmPassword?.message}
                   secureTextEntry
                 />
               )}
