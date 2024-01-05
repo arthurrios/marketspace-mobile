@@ -7,12 +7,31 @@ import { InputPassword } from '@components/InputPassword'
 import { Button } from '@components/Button'
 import { useNavigation } from '@react-navigation/native'
 import { AuthNavigationRoutesProps } from '@routes/auth.routes'
+import { useAuth } from '@hooks/Auth'
+import { Controller, useForm } from 'react-hook-form'
+
+type FormData = {
+  email: string
+  password: string
+}
 
 export function SignIn() {
+  const { signIn } = useAuth()
+
   const navigation = useNavigation<AuthNavigationRoutesProps>()
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>()
 
   function handleNewAccount() {
     navigation.navigate('signUp')
+  }
+
+  function handleSignIn({ email, password }: FormData) {
+    signIn(email, password)
   }
 
   return (
@@ -34,10 +53,34 @@ export function SignIn() {
                   <Text color="$gray200" mt={77}>
                     Access your account
                   </Text>
-                  <Input placeholder="Email" />
-                  <InputPassword placeholder="Password" />
+                  <Controller
+                    control={control}
+                    name="email"
+                    rules={{ required: 'Enter email' }}
+                    render={({ field: { onChange } }) => (
+                      <Input
+                        placeholder="Email"
+                        keyboardType="email-address"
+                        onChangeText={onChange}
+                        errorMessage={errors.email?.message}
+                      />
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="password"
+                    rules={{ required: 'Enter password' }}
+                    render={({ field: { onChange } }) => (
+                      <InputPassword
+                        placeholder="Password"
+                        secureTextEntry
+                        onChangeText={onChange}
+                        errorMessage={errors.password?.message}
+                      />
+                    )}
+                  />
                 </Center>
-                <Button title="Sign in" />
+                <Button title="Sign in" onPress={handleSubmit(handleSignIn)} />
               </Center>
             </Center>
           </VStack>

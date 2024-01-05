@@ -11,8 +11,6 @@ export function Routes() {
   const { user } = useAuth()
   theme.colors.background = '#F7F7F8'
 
-  console.log('USER LOGGED IN =>', user)
-
   return (
     <Box flex={1} bg="$gray700">
       <NavigationContainer>
