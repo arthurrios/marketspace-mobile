@@ -27,6 +27,8 @@ import { z } from 'zod'
 import { AppError } from '@utils/AppError'
 import { api } from '@services/api'
 import { AuthNavigationRoutesProps } from '@routes/auth.routes'
+import { PhotoFileDTO } from '@dtos/PhotoFileDTO'
+import { ToastError } from '@components/ToastError'
 
 type FormDataProps = {
   avatar: string
@@ -149,7 +151,7 @@ export function SignUp() {
             return (
               <Toast nativeID={toastId} action="success" variant="outline">
                 <VStack space="xs">
-                  <ToastTitle>User created succesfully!</ToastTitle>
+                  <ToastTitle>User created successfully!</ToastTitle>
                 </VStack>
               </Toast>
             )
@@ -158,20 +160,7 @@ export function SignUp() {
 
         navigation.navigate('signIn')
       } else {
-        return toast.show({
-          placement: 'top',
-          render: ({ id }) => {
-            const toastId = 'toast-' + id
-            return (
-              <Toast nativeID={toastId} action="warning" variant="outline">
-                <VStack space="xs">
-                  <ToastTitle>Profile Image Missing</ToastTitle>
-                  <ToastDescription>Choose a profile image.</ToastDescription>
-                </VStack>
-              </Toast>
-            )
-          },
-        })
+        return <ToastError title="Profile Image Missing" />
       }
     } catch (error) {
       const isAppError = error instanceof AppError
@@ -179,19 +168,7 @@ export function SignUp() {
         ? error.message
         : 'Error creating account. Try again later.'
 
-      toast.show({
-        placement: 'top',
-        render: ({ id }) => {
-          const toastId = 'toast-' + id
-          return (
-            <Toast nativeID={toastId} action="error" variant="outline">
-              <VStack space="xs">
-                <ToastTitle>{title}</ToastTitle>
-              </VStack>
-            </Toast>
-          )
-        },
-      })
+      return <ToastError title={title} />
     }
   }
 

@@ -32,11 +32,13 @@ import { useNavigation } from '@react-navigation/native'
 import { AppNavigationRoutesProps } from '@routes/app.routes'
 import { ArrowLeft, Check, Plus, X } from 'phosphor-react-native'
 import * as ImagePicker from 'expo-image-picker'
-import * as FileSystem from 'expo-file-system'
+import { AppError } from '@utils/AppError'
+import { ToastError } from '@components/ToastError'
 
 export function CreateAd() {
   const [photoIsLoading, setPhotoIsLoading] = useState(false)
   const [images, setImages] = useState<string[]>([])
+  const [imagesUri, setImagesUri] = useState<string[]>([])
   const [values, setValues] = useState('')
   const [paymentMethodsSelected, setPaymentMethodsSelected] = useState([])
   const toast = useToast()
@@ -85,10 +87,15 @@ export function CreateAd() {
             },
           })
         }
-        setImages([...images, ...newImages])
+        setImagesUri([...images, ...newImages])
       }
     } catch (error) {
       console.log(error)
+      const isAppError = error instanceof AppError
+
+      const title = isAppError ? error.message : 'Login failed. Try again.'
+
+      return <ToastError title={title} />
     } finally {
       setPhotoIsLoading(false)
     }
@@ -126,8 +133,8 @@ export function CreateAd() {
                 </Text>
               </VStack>
               <HStack gap="$4">
-                {images &&
-                  images.map((image, index) => {
+                {imagesUri &&
+                  imagesUri.map((image, index) => {
                     return (
                       <View key={index} h={100} w={100} borderRadius={6}>
                         <Image
@@ -155,7 +162,7 @@ export function CreateAd() {
                       </View>
                     )
                   })}
-                {images && images.length < 3 && (
+                {imagesUri && imagesUri.length < 3 && (
                   <Pressable
                     h={100}
                     w={100}
