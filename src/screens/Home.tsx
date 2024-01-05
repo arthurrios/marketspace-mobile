@@ -24,8 +24,10 @@ import {
   ModalFooter,
   FlatList,
 } from '@gluestack-ui/themed'
+import { useAuth } from '@hooks/Auth'
 import { useNavigation } from '@react-navigation/native'
 import { AppNavigationRoutesProps } from '@routes/app.routes'
+import { api } from '@services/api'
 import {
   ArrowRight,
   Check,
@@ -39,7 +41,6 @@ import { useState } from 'react'
 
 export function Home() {
   const [showModal, setShowModal] = useState(false)
-
   const [products, setProducts] = useState([
     'Red Sneakers',
     'Blue Sneakers',
@@ -48,9 +49,10 @@ export function Home() {
     'Orange Sneakers',
     'Black Sneakers',
   ])
-
   const [isNew, setIsNew] = useState(true)
   const [paymentMethodsSelected, setPaymentMethodsSelected] = useState([])
+
+  const { user } = useAuth()
 
   const navigation = useNavigation<AppNavigationRoutesProps>()
 
@@ -71,11 +73,11 @@ export function Home() {
               <UserImage
                 height={45}
                 width={45}
-                uri="https://github.com/arthurrios.png"
+                uri={`${api.defaults.baseURL}/images/${user.avatar}`}
               />
               <VStack>
                 <Text color="$gray100">Welcome,</Text>
-                <Text fontFamily="$heading">Arthur!</Text>
+                <Text fontFamily="$heading">{user.name}!</Text>
               </VStack>
             </HStack>
           </Pressable>
