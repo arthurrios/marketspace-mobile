@@ -1,5 +1,13 @@
 /* eslint-disable react/no-unescaped-entities */
-import { Center, ScrollView, Text, VStack } from '@gluestack-ui/themed'
+import {
+  Center,
+  ScrollView,
+  Text,
+  Toast,
+  ToastTitle,
+  VStack,
+  useToast,
+} from '@gluestack-ui/themed'
 import LogoSvg from '@assets/logo.svg'
 import MarketspaceSvg from '@assets/logotype.svg'
 import { Input } from '@components/Input'
@@ -9,6 +17,8 @@ import { useNavigation } from '@react-navigation/native'
 import { AuthNavigationRoutesProps } from '@routes/auth.routes'
 import { useAuth } from '@hooks/Auth'
 import { Controller, useForm } from 'react-hook-form'
+import { useState } from 'react'
+import { AppError } from '@utils/AppError'
 
 type FormData = {
   email: string
@@ -16,7 +26,10 @@ type FormData = {
 }
 
 export function SignIn() {
+  const [isLoading, setIsLoading] = useState(false)
   const { signIn } = useAuth()
+
+  const toast = useToast()
 
   const navigation = useNavigation<AuthNavigationRoutesProps>()
 
@@ -30,8 +43,31 @@ export function SignIn() {
     navigation.navigate('signUp')
   }
 
-  function handleSignIn({ email, password }: FormData) {
-    signIn(email, password)
+  async function handleSignIn({ email, password }: FormData) {
+    try {
+      setIsLoading(true)
+      await signIn(email, password)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+
+      const title = isAppError ? error.message : 'Login failed. Try again.'
+
+      setIsLoading(false)
+
+      toast.show({
+        placement: 'top',
+        render: ({ id }) => {
+          const toastId = 'toast-' + id
+          return (
+            <Toast nativeID={toastId} action="error" variant="outline">
+              <VStack space="xs">
+                <ToastTitle>{title}</ToastTitle>
+              </VStack>
+            </Toast>
+          )
+        },
+      })
+    }
   }
 
   return (

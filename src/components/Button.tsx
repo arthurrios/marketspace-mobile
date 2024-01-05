@@ -3,6 +3,7 @@ import {
   ButtonGroup,
   ButtonIcon,
   ButtonText,
+  IButtonProps,
   Button as GluestackButton,
 } from '@gluestack-ui/themed'
 import { ReactNode } from 'react'
@@ -25,7 +26,7 @@ export function Button({
   ...props
 }: Props) {
   return (
-    <ButtonGroup flex={1}>
+    <ButtonGroup flex={1} {...props}>
       <GluestackButton
         h={42}
         bgColor={
