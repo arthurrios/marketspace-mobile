@@ -41,6 +41,7 @@ export function InputPassword({
         h={45}
         py="$3"
         px="$1"
+        w="$full"
         bgColor="$gray700"
         borderWidth={0}
         borderRadius={6}

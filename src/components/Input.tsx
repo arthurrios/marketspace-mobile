@@ -34,6 +34,7 @@ export function Input({
         py="$3"
         px="$1"
         gap="$3"
+        w="$full"
         bgColor="$gray700"
         borderWidth={0}
         borderRadius={6}

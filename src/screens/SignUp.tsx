@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Center,
   Pressable,
@@ -23,6 +24,9 @@ import * as ImagePicker from 'expo-image-picker'
 import * as FileSystem from 'expo-file-system'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { AppError } from '@utils/AppError'
+import { api } from '@services/api'
+import { AuthNavigationRoutesProps } from '@routes/auth.routes'
 
 type FormDataProps = {
   avatar: string
@@ -66,7 +70,7 @@ export function SignUp() {
     resolver: zodResolver(signUpSchema),
   })
 
-  const navigation = useNavigation()
+  const navigation = useNavigation<AuthNavigationRoutesProps>()
 
   function handleGoBack() {
     navigation.goBack()
@@ -127,13 +131,32 @@ export function SignUp() {
           uri: userPhoto.uri,
           type: `${userPhoto.type}/${fileExtension}`,
         } as any
-        const formData = new FormData()
-        formData.append('avatar', photoFile)
-        formData.append('name', name)
-        formData.append('email', email)
-        formData.append('tel', tel)
-        formData.append('password', password)
-        console.log(formData)
+        const userCreatedForm = new FormData()
+        userCreatedForm.append('avatar', photoFile)
+        userCreatedForm.append('name', name)
+        userCreatedForm.append('email', email)
+        userCreatedForm.append('tel', tel)
+        userCreatedForm.append('password', password)
+
+        await api.post('/users', userCreatedForm, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+
+        toast.show({
+          placement: 'top',
+          render: ({ id }) => {
+            const toastId = 'toast-' + id
+            return (
+              <Toast nativeID={toastId} action="success" variant="outline">
+                <VStack space="xs">
+                  <ToastTitle>User created succesfully!</ToastTitle>
+                </VStack>
+              </Toast>
+            )
+          },
+        })
+
+        navigation.navigate('signIn')
       } else {
         return toast.show({
           placement: 'top',
@@ -151,7 +174,24 @@ export function SignUp() {
         })
       }
     } catch (error) {
-      console.log(error)
+      const isAppError = error instanceof AppError
+      const title = isAppError
+        ? error.message
+        : 'Error creating account. Try again later.'
+
+      toast.show({
+        placement: 'top',
+        render: ({ id }) => {
+          const toastId = 'toast-' + id
+          return (
+            <Toast nativeID={toastId} action="error" variant="outline">
+              <VStack space="xs">
+                <ToastTitle>{title}</ToastTitle>
+              </VStack>
+            </Toast>
+          )
+        },
+      })
     }
   }
 
