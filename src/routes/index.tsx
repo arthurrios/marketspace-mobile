@@ -4,13 +4,18 @@ import { AuthRoutes } from '@routes/auth.routes'
 
 import { useAuth } from '@hooks/Auth'
 import { AppRoutes } from './app.routes'
+import { Loading } from '@components/Loading'
 
 export function Routes() {
   const theme = DefaultTheme
-  const { user } = useAuth()
+  const { user, isLoadingUserStorageData } = useAuth()
   theme.colors.background = '#F7F7F8'
 
   console.log('USER LOGGED IN =>', user)
+
+  if (isLoadingUserStorageData) {
+    return <Loading />
+  }
 
   return (
     <Box flex={1} bg="$gray700">

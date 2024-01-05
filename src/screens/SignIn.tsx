@@ -111,6 +111,7 @@ export function SignIn() {
                         placeholder="Password"
                         secureTextEntry
                         onChangeText={onChange}
+                        onSubmitEditing={handleSubmit(handleSignIn)}
                         errorMessage={errors.password?.message}
                       />
                     )}
