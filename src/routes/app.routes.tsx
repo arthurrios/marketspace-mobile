@@ -7,12 +7,13 @@ import { MySales } from '@screens/MySales'
 import { Product } from '@screens/Product'
 import { Platform } from 'react-native'
 import { House, SignOut, Tag } from 'phosphor-react-native'
-import { View } from '@gluestack-ui/themed'
 import { MyProduct } from '@screens/MyProduct'
 import { CreateAd } from '@screens/CreateAd'
 import { EditAd } from '@screens/EditAd'
 import { AdPreview } from '@screens/AdPreview'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { useAuth } from '@hooks/Auth'
+import { Loading } from '@components/Loading'
 
 export type AppRoutes = {
   home: undefined
@@ -43,12 +44,14 @@ export function NestedRoutes() {
 }
 
 export function AppRoutes() {
-  function LogOut() {
-    function handleLogOut() {
-      console.log('logOut')
-    }
+  const { signOut, isLoadingUserStorageData } = useAuth()
 
-    return <View />
+  function LogOut() {
+    signOut()
+
+    if (isLoadingUserStorageData) {
+      return <Loading />
+    }
   }
 
   const iconSize = 24
