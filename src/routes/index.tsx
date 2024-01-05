@@ -11,8 +11,6 @@ export function Routes() {
   const { user, isLoadingUserStorageData } = useAuth()
   theme.colors.background = '#F7F7F8'
 
-  console.log('USER LOGGED IN =>', user)
-
   if (isLoadingUserStorageData) {
     return <Loading />
   }
