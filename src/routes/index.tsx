@@ -4,13 +4,14 @@ import { AuthRoutes } from '@routes/auth.routes'
 import { AppRoutes } from '@routes/app.routes'
 import { useContext } from 'react'
 import { AuthContext } from '@contexts/AuthContext'
+import { useAuth } from '@hooks/Auth'
 
 export function Routes() {
   const theme = DefaultTheme
+  const { user } = useAuth()
   theme.colors.background = '#F7F7F8'
 
-  const contextData = useContext(AuthContext)
-  console.log('USER LOGGED IN =>', contextData)
+  console.log('USER LOGGED IN =>', user)
 
   return (
     <Box flex={1} bg="$gray700">
