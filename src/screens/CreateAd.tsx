@@ -26,13 +26,18 @@ import {
   ToastDescription,
   Toast,
   ToastTitle,
+  FormControlError,
+  FormControlErrorText,
+  FormControl,
 } from '@gluestack-ui/themed'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { AppNavigationRoutesProps } from '@routes/app.routes'
 import { ArrowLeft, Check, Plus, X } from 'phosphor-react-native'
 import * as ImagePicker from 'expo-image-picker'
 import { z } from 'zod'
+import { Controller, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 type CreateAdFormDataProps = {
   images: ImagePicker.ImagePickerAsset[]
@@ -74,14 +79,28 @@ export function CreateAd() {
   const [paymentMethodsSelected, setPaymentMethodsSelected] = useState([])
   const toast = useToast()
 
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    clearErrors,
+    formState: { errors },
+  } = useForm<CreateAdFormDataProps>({
+    resolver: zodResolver(createAdSchema),
+  })
+
   const navigation = useNavigation<AppNavigationRoutesProps>()
 
   function handleGoBack() {
     navigation.goBack()
   }
 
-  function handleGoForward() {
-    navigation.navigate('adPreview')
+  async function handleGoForward() {
+    try {
+      navigation.navigate('adPreview')
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   async function handleUploadProductPictures() {
@@ -117,6 +136,9 @@ export function CreateAd() {
             },
           })
         }
+        if (errors.images) {
+          clearErrors('images')
+        }
         setImages([...images, ...newImagesSelected])
       }
     } catch (error) {
@@ -133,6 +155,10 @@ export function CreateAd() {
       setImages(updatedImages)
     }
   }
+
+  useEffect(() => {
+    setValue('images', images)
+  }, [images])
 
   return (
     <>
@@ -206,6 +232,11 @@ export function CreateAd() {
                   </Pressable>
                 )}
               </HStack>
+              {errors.images && (
+                <FormControlErrorText>
+                  {errors.images.message}
+                </FormControlErrorText>
+              )}
             </VStack>
             <VStack gap="$4">
               <Text fontFamily="$heading" color="$gray200">
@@ -312,7 +343,11 @@ export function CreateAd() {
       </VStack>
       <HStack bgColor="$gray700" gap="$3" pt="$5" px="$6" pb={28}>
         <Button variant="tertiary" title="Cancel" />
-        <Button variant="secondary" title="Next" onPress={handleGoForward} />
+        <Button
+          variant="secondary"
+          title="Next"
+          onPress={handleSubmit(handleGoForward)}
+        />
       </HStack>
     </>
   )

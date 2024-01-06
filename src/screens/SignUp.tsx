@@ -27,7 +27,6 @@ import { z } from 'zod'
 import { AppError } from '@utils/AppError'
 import { api } from '@services/api'
 import { AuthNavigationRoutesProps } from '@routes/auth.routes'
-import { PhotoFileDTO } from '@dtos/PhotoFileDTO'
 import { ToastError } from '@components/ToastError'
 
 type FormDataProps = {
