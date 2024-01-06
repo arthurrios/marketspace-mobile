@@ -49,6 +49,7 @@ export function Input({
           fontSize="$md"
           value={value}
           autoCapitalize="none"
+          {...props}
         />
         {children}
       </GluestackInput>

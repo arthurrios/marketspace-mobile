@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { Button } from '@components/Button'
 import { Input } from '@components/Input'
 import { MoneyInput } from '@components/MoneyInput'
@@ -26,9 +27,7 @@ import {
   ToastDescription,
   Toast,
   ToastTitle,
-  FormControlError,
   FormControlErrorText,
-  FormControl,
 } from '@gluestack-ui/themed'
 import { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
@@ -39,18 +38,18 @@ import { z } from 'zod'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-type CreateAdFormDataProps = {
+export type CreateAdFormDataProps = {
   images: ImagePicker.ImagePickerAsset[]
   adTitle: string
   description: string
   productState: string
-  price: number
+  price: string
   acceptTrade: boolean
   paymentMethods: string[]
 }
 
-const createAdSchema = z.object({
-  images: z.array(z.object({})).refine((value) => value.length > 0, {
+export const createAdSchema = z.object({
+  images: z.array(z.unknown()).refine((value) => value.length > 0, {
     message: 'Select at least one image',
   }),
   adTitle: z.string().min(1, { message: 'Enter a title' }),
@@ -60,22 +59,21 @@ const createAdSchema = z.object({
     .refine((value) => value === 'new' || value === 'used', {
       message: 'Select your product state',
     }),
-  price: z.number().refine((value) => value >= 0, {
-    message: 'Price must be a non-negative value',
-  }),
-  acceptTrade: z.boolean(),
-  paymentMethods: z.array(
-    z.string().refine((value) => value.length > 0, {
-      message: 'Select at least one payment method',
+  price: z
+    .string()
+    .min(1, { message: 'Enter a price' })
+    .refine((value) => Number(value.replace(',', '')) >= 0, {
+      message: 'Price must be a non-negative value',
     }),
-  ),
+  acceptTrade: z.boolean(),
+  paymentMethods: z.array(z.string()).refine((value) => value.length > 0, {
+    message: 'Select at least one payment method',
+  }),
 })
 
 export function CreateAd() {
   const [photoIsLoading, setPhotoIsLoading] = useState(false)
   const [images, setImages] = useState<ImagePicker.ImagePickerAsset[]>([])
-  const [productState, setProductState] = useState('')
-  const [isNew, setIsNew] = useState<boolean>()
   const [paymentMethodsSelected, setPaymentMethodsSelected] = useState([])
   const toast = useToast()
 
@@ -95,9 +93,9 @@ export function CreateAd() {
     navigation.goBack()
   }
 
-  async function handleGoForward() {
+  async function handleGoForward(formData: CreateAdFormDataProps) {
     try {
-      navigation.navigate('adPreview')
+      navigation.navigate('adPreview', { formData })
     } catch (error) {
       console.log(error)
     }
@@ -139,8 +137,13 @@ export function CreateAd() {
         if (errors.images) {
           clearErrors('images')
         }
-        setImages([...images, ...newImagesSelected])
       }
+
+      setImages((prevImages) => {
+        const updatedImages = [...prevImages, ...newImagesSelected]
+        setValue('images', updatedImages)
+        return updatedImages
+      })
     } catch (error) {
       console.log(error)
     } finally {
@@ -155,6 +158,14 @@ export function CreateAd() {
       setImages(updatedImages)
     }
   }
+
+  useEffect(() => {
+    setValue('paymentMethods', paymentMethodsSelected)
+
+    if (paymentMethodsSelected.length > 0 && errors.paymentMethods) {
+      clearErrors('paymentMethods')
+    }
+  }, [paymentMethodsSelected, errors.paymentMethods])
 
   useEffect(() => {
     setValue('images', images)
@@ -233,7 +244,7 @@ export function CreateAd() {
                 )}
               </HStack>
               {errors.images && (
-                <FormControlErrorText>
+                <FormControlErrorText fontSize={14}>
                   {errors.images.message}
                 </FormControlErrorText>
               )}
@@ -242,107 +253,175 @@ export function CreateAd() {
               <Text fontFamily="$heading" color="$gray200">
                 About this product
               </Text>
-              <Input placeholder="Ad title" />
-              <TextArea placeholder="Product Description" />
-              <RadioGroup
-                value={productState}
-                onChange={(value) => {
-                  setProductState(value)
-                  setIsNew(value === 'new')
-                }}
-                gap="$5"
-                flexDirection="row"
-              >
-                <Radio value="new">
-                  <RadioIndicator>
-                    <RadioIcon as={RadioCheck} />
-                  </RadioIndicator>
-                  <RadioLabel ml="$2">New product</RadioLabel>
-                </Radio>
-                <Radio value="used">
-                  <RadioIndicator>
-                    <RadioIcon as={RadioCheck} />
-                  </RadioIndicator>
-                  <RadioLabel ml="$2">Used product</RadioLabel>
-                </Radio>
-              </RadioGroup>
+              <Controller
+                control={control}
+                name="adTitle"
+                render={({ field: { onChange, value } }) => (
+                  <Input
+                    placeholder="Ad title"
+                    onChangeText={onChange}
+                    value={value}
+                    errorMessage={errors.adTitle?.message}
+                  />
+                )}
+              />
+              <Controller
+                control={control}
+                name="description"
+                render={({ field: { onChange, value } }) => (
+                  <TextArea
+                    onChangeText={onChange}
+                    value={value}
+                    placeholder="Product Description"
+                    errorMessage={errors.description?.message}
+                  />
+                )}
+              />
+              <Controller
+                control={control}
+                name="productState"
+                defaultValue=""
+                render={({ field: { onChange, value } }) => (
+                  <RadioGroup
+                    value={value}
+                    onChange={onChange}
+                    gap="$5"
+                    flexDirection="row"
+                  >
+                    <Radio value="new">
+                      <RadioIndicator>
+                        <RadioIcon as={RadioCheck} />
+                      </RadioIndicator>
+                      <RadioLabel ml="$2">New product</RadioLabel>
+                    </Radio>
+                    <Radio value="used">
+                      <RadioIndicator>
+                        <RadioIcon as={RadioCheck} />
+                      </RadioIndicator>
+                      <RadioLabel ml="$2">Used product</RadioLabel>
+                    </Radio>
+                  </RadioGroup>
+                )}
+              />
+              {errors.productState && (
+                <FormControlErrorText fontSize={14}>
+                  {errors.productState.message}
+                </FormControlErrorText>
+              )}
             </VStack>
             <VStack gap="$4">
               <Text fontFamily="$heading" color="$gray200">
                 Sale
               </Text>
-              <MoneyInput placeholder="Product price" />
+              <Controller
+                control={control}
+                name="price"
+                render={({ field: { onChange, value } }) => (
+                  <MoneyInput
+                    placeholder="Product price"
+                    onChangeText={onChange}
+                    value={value}
+                    errorMessage={errors.price?.message}
+                  />
+                )}
+              />
               <VStack gap="$3">
                 <Text fontFamily="$heading" fontSize="$sm">
                   Accept trade?
                 </Text>
-                <Switch
-                  sx={{
-                    _light: {
-                      props: {
-                        trackColor: {
-                          false: '#D9D8DA',
-                          true: '#647AC7',
+                <Controller
+                  control={control}
+                  name="acceptTrade"
+                  defaultValue={false}
+                  render={({ field: { onChange, value } }) => (
+                    <Switch
+                      onToggle={onChange}
+                      value={value}
+                      sx={{
+                        _light: {
+                          props: {
+                            trackColor: {
+                              false: '#D9D8DA',
+                              true: '#647AC7',
+                            },
+                            thumbColor: '#F7F7F8',
+                          },
                         },
-                        thumbColor: '#F7F7F8',
-                      },
-                    },
-                  }}
+                      }}
+                    />
+                  )}
                 />
               </VStack>
 
-              <VStack gap="$3">
-                <Text fontFamily="$heading" fontSize="$sm">
-                  Payment methods accepted
-                </Text>
-                <CheckboxGroup
-                  value={paymentMethodsSelected}
-                  onChange={(keys) => {
-                    setPaymentMethodsSelected(keys)
-                  }}
-                >
-                  <VStack space="sm">
-                    <Checkbox value="Voucher" aria-label="voucher">
-                      <CheckboxIndicator mr="$2">
-                        <CheckboxIcon as={Check} />
-                      </CheckboxIndicator>
-                      <CheckboxLabel color="#3E3A40">Voucher</CheckboxLabel>
-                    </Checkbox>
-                    <Checkbox value="Pix" aria-label="pix">
-                      <CheckboxIndicator mr="$2">
-                        <CheckboxIcon as={Check} />
-                      </CheckboxIndicator>
-                      <CheckboxLabel color="#3E3A40">Pix</CheckboxLabel>
-                    </Checkbox>
-                    <Checkbox value="Cash" aria-label="cash">
-                      <CheckboxIndicator mr="$2">
-                        <CheckboxIcon as={Check} />
-                      </CheckboxIndicator>
-                      <CheckboxLabel color="#3E3A40">Cash</CheckboxLabel>
-                    </Checkbox>
-                    <Checkbox value="Credit Card" aria-label="credit card">
-                      <CheckboxIndicator mr="$2">
-                        <CheckboxIcon as={Check} />
-                      </CheckboxIndicator>
-                      <CheckboxLabel color="#3E3A40">Credit Card</CheckboxLabel>
-                    </Checkbox>
-                    <Checkbox value="Bank Deposit" aria-label="bank deposit">
-                      <CheckboxIndicator mr="$2">
-                        <CheckboxIcon as={Check} />
-                      </CheckboxIndicator>
-                      <CheckboxLabel color="#3E3A40">
-                        Bank Deposit
-                      </CheckboxLabel>
-                    </Checkbox>
+              <Controller
+                control={control}
+                name="paymentMethods"
+                render={({ field: { onChange, value } }) => (
+                  <VStack gap="$3">
+                    <Text fontFamily="$heading" fontSize="$sm">
+                      Payment methods accepted
+                    </Text>
+                    <CheckboxGroup
+                      value={paymentMethodsSelected}
+                      onChange={(keys) => {
+                        setPaymentMethodsSelected(keys)
+                      }}
+                    >
+                      <VStack space="sm">
+                        <Checkbox value="voucher" aria-label="voucher">
+                          <CheckboxIndicator mr="$2">
+                            <CheckboxIcon as={Check} />
+                          </CheckboxIndicator>
+                          <CheckboxLabel color="#3E3A40">Voucher</CheckboxLabel>
+                        </Checkbox>
+                        <Checkbox value="pix" aria-label="pix">
+                          <CheckboxIndicator mr="$2">
+                            <CheckboxIcon as={Check} />
+                          </CheckboxIndicator>
+                          <CheckboxLabel color="#3E3A40">Pix</CheckboxLabel>
+                        </Checkbox>
+                        <Checkbox value="cash" aria-label="cash">
+                          <CheckboxIndicator mr="$2">
+                            <CheckboxIcon as={Check} />
+                          </CheckboxIndicator>
+                          <CheckboxLabel color="#3E3A40">Cash</CheckboxLabel>
+                        </Checkbox>
+                        <Checkbox value="card" aria-label="credit card">
+                          <CheckboxIndicator mr="$2">
+                            <CheckboxIcon as={Check} />
+                          </CheckboxIndicator>
+                          <CheckboxLabel color="#3E3A40">
+                            Credit Card
+                          </CheckboxLabel>
+                        </Checkbox>
+                        <Checkbox value="deposit" aria-label="bank deposit">
+                          <CheckboxIndicator mr="$2">
+                            <CheckboxIcon as={Check} />
+                          </CheckboxIndicator>
+                          <CheckboxLabel color="#3E3A40">
+                            Bank Deposit
+                          </CheckboxLabel>
+                        </Checkbox>
+                      </VStack>
+                    </CheckboxGroup>
+                    {errors.paymentMethods && (
+                      <FormControlErrorText fontSize={14}>
+                        {errors.paymentMethods.message}
+                      </FormControlErrorText>
+                    )}
                   </VStack>
-                </CheckboxGroup>
-              </VStack>
+                )}
+              />
             </VStack>
           </VStack>
         </ScrollView>
       </VStack>
       <HStack bgColor="$gray700" gap="$3" pt="$5" px="$6" pb={28}>
-        <Button variant="tertiary" title="Cancel" />
+        <Button
+          variant="tertiary"
+          title="Cancel"
+          onPress={() => navigation.goBack()}
+        />
         <Button
           variant="secondary"
           title="Next"
