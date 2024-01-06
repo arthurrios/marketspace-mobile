@@ -32,12 +32,10 @@ import { useNavigation } from '@react-navigation/native'
 import { AppNavigationRoutesProps } from '@routes/app.routes'
 import { ArrowLeft, Check, Plus, X } from 'phosphor-react-native'
 import * as ImagePicker from 'expo-image-picker'
-import { AppError } from '@utils/AppError'
-import { ToastError } from '@components/ToastError'
 
 export function CreateAd() {
   const [photoIsLoading, setPhotoIsLoading] = useState(false)
-  const [images, setImages] = useState<string[]>([])
+  const [images, setImages] = useState<ImagePicker.ImagePickerAsset[]>([])
   const [imagesUri, setImagesUri] = useState<string[]>([])
   const [values, setValues] = useState('')
   const [paymentMethodsSelected, setPaymentMethodsSelected] = useState([])
@@ -65,11 +63,12 @@ export function CreateAd() {
 
       if (photosSelected.canceled) return
 
-      const newImages = photosSelected.assets.map((photo) => photo.uri)
+      const newImagesUri = photosSelected.assets.map((photo) => photo.uri)
 
-      // You can set a limit on the number of selected photos (e.g., 3)
+      const newImagesSelected = photosSelected.assets
+
       if (images) {
-        if (images.length + newImages.length > 3) {
+        if (images.length + newImagesSelected.length > 3) {
           return toast.show({
             placement: 'top',
             render: ({ id }) => {
@@ -87,15 +86,11 @@ export function CreateAd() {
             },
           })
         }
-        setImagesUri([...images, ...newImages])
+        setImages([...images, ...newImagesSelected])
+        setImagesUri([...imagesUri, ...newImagesUri])
       }
     } catch (error) {
       console.log(error)
-      const isAppError = error instanceof AppError
-
-      const title = isAppError ? error.message : 'Login failed. Try again.'
-
-      return <ToastError title={title} />
     } finally {
       setPhotoIsLoading(false)
     }

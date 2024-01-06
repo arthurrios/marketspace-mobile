@@ -259,6 +259,7 @@ export function SignUp() {
                 <Input
                   placeholder="Phone"
                   onChangeText={onChange}
+                  keyboardType="number-pad"
                   value={value}
                   errorMessage={errors.tel?.message}
                 />
