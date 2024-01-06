@@ -32,12 +32,45 @@ import { useNavigation } from '@react-navigation/native'
 import { AppNavigationRoutesProps } from '@routes/app.routes'
 import { ArrowLeft, Check, Plus, X } from 'phosphor-react-native'
 import * as ImagePicker from 'expo-image-picker'
+import { z } from 'zod'
+
+type CreateAdFormDataProps = {
+  images: ImagePicker.ImagePickerAsset[]
+  adTitle: string
+  description: string
+  productState: string
+  price: number
+  acceptTrade: boolean
+  paymentMethods: string[]
+}
+
+const createAdSchema = z.object({
+  images: z.array(z.object({})).refine((value) => value.length > 0, {
+    message: 'Select at least one image',
+  }),
+  adTitle: z.string().min(1, { message: 'Enter a title' }),
+  description: z.string().min(1, { message: 'Enter a description' }),
+  productState: z
+    .string()
+    .refine((value) => value === 'new' || value === 'used', {
+      message: 'Select your product state',
+    }),
+  price: z.number().refine((value) => value >= 0, {
+    message: 'Price must be a non-negative value',
+  }),
+  acceptTrade: z.boolean(),
+  paymentMethods: z.array(
+    z.string().refine((value) => value.length > 0, {
+      message: 'Select at least one payment method',
+    }),
+  ),
+})
 
 export function CreateAd() {
   const [photoIsLoading, setPhotoIsLoading] = useState(false)
   const [images, setImages] = useState<ImagePicker.ImagePickerAsset[]>([])
-  const [imagesUri, setImagesUri] = useState<string[]>([])
-  const [values, setValues] = useState('')
+  const [productState, setProductState] = useState('')
+  const [isNew, setIsNew] = useState<boolean>()
   const [paymentMethodsSelected, setPaymentMethodsSelected] = useState([])
   const toast = useToast()
 
@@ -63,8 +96,6 @@ export function CreateAd() {
 
       if (photosSelected.canceled) return
 
-      const newImagesUri = photosSelected.assets.map((photo) => photo.uri)
-
       const newImagesSelected = photosSelected.assets
 
       if (images) {
@@ -87,7 +118,6 @@ export function CreateAd() {
           })
         }
         setImages([...images, ...newImagesSelected])
-        setImagesUri([...imagesUri, ...newImagesUri])
       }
     } catch (error) {
       console.log(error)
@@ -128,15 +158,15 @@ export function CreateAd() {
                 </Text>
               </VStack>
               <HStack gap="$4">
-                {imagesUri &&
-                  imagesUri.map((image, index) => {
+                {images &&
+                  images.map((image, index) => {
                     return (
                       <View key={index} h={100} w={100} borderRadius={6}>
                         <Image
                           h={100}
                           w={100}
                           alt=""
-                          source={image}
+                          source={image.uri}
                           resizeMode="cover"
                           borderRadius={6}
                         />
@@ -157,7 +187,7 @@ export function CreateAd() {
                       </View>
                     )
                   })}
-                {imagesUri && imagesUri.length < 3 && (
+                {images && images.length < 3 && (
                   <Pressable
                     h={100}
                     w={100}
@@ -184,8 +214,11 @@ export function CreateAd() {
               <Input placeholder="Ad title" />
               <TextArea placeholder="Product Description" />
               <RadioGroup
-                value={values}
-                onChange={setValues}
+                value={productState}
+                onChange={(value) => {
+                  setProductState(value)
+                  setIsNew(value === 'new')
+                }}
                 gap="$5"
                 flexDirection="row"
               >

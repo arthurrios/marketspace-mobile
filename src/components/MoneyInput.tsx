@@ -1,9 +1,4 @@
-import {
-  Text,
-  Input as GluestackInput,
-  HStack,
-  InputField,
-} from '@gluestack-ui/themed'
+import { Text, Input as GluestackInput, InputField } from '@gluestack-ui/themed'
 import { ReactNode } from 'react'
 
 interface InputProps {
