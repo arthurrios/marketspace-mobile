@@ -26,13 +26,13 @@ export function PaymentTag({ type }: PaymentTagProps) {
           <Text color="$gray100">Cash</Text>
         </>
       )}
-      {type === 'creditCard' && (
+      {type === 'card' && (
         <>
           <CreditCard size={20} color="#1A181B" />
           <Text color="$gray100">Credit Card</Text>
         </>
       )}
-      {type === 'bankDeposit' && (
+      {type === 'deposit' && (
         <>
           <Bank size={20} color="#1A181B" />
           <Text color="$gray100">Bank Deposit</Text>

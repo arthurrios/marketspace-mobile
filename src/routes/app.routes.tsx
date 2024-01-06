@@ -8,7 +8,7 @@ import { Product } from '@screens/Product'
 import { Platform } from 'react-native'
 import { House, SignOut, Tag } from 'phosphor-react-native'
 import { MyProduct } from '@screens/MyProduct'
-import { CreateAd } from '@screens/CreateAd'
+import { CreateAd, CreateAdFormDataProps } from '@screens/CreateAd'
 import { EditAd } from '@screens/EditAd'
 import { AdPreview } from '@screens/AdPreview'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -24,7 +24,7 @@ export type AppRoutes = {
   nestedRoutes: undefined
   createAd: undefined
   editAd: undefined
-  adPreview: undefined
+  adPreview: { formData: CreateAdFormDataProps }
 }
 
 export type AppNavigationRoutesProps = BottomTabNavigationProp<AppRoutes>

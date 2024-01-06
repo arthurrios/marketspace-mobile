@@ -14,7 +14,7 @@ interface CarouselProps {
   adIsActive?: boolean
 }
 
-export function Carousel({ images, adIsActive }: CarouselProps) {
+export function Carousel({ images, adIsActive = true }: CarouselProps) {
   const scrollX = useRef(new Animated.Value(0)).current
   function handleOnScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
     Animated.event(
