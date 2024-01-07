@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 import { Button } from '@components/Button'
 import { Carousel } from '@components/Carousel'
 import { PaymentTag } from '@components/PaymentTag'
@@ -25,6 +26,40 @@ export function AdPreview() {
 
   function handleGoBack() {
     navigation.goBack()
+  }
+
+  async function handleCreateAd() {
+    try {
+      const { data } = await api.post('/products', {
+        name: formData.adTitle,
+        description: formData.description,
+        is_new: formData.productState === 'new',
+        accept_trade: formData.acceptTrade,
+        payment_methods: formData.paymentMethods,
+        price: parseFloat(formData.price.replace(',', '.')) * 100,
+      })
+
+      const productId = data.id
+
+      const productImagesUploadForm = new FormData()
+
+      formData.images.forEach((image, index) => {
+        const fileExtension = image.uri.split('.').pop()
+        productImagesUploadForm.append('images', {
+          name: `${image.fileName}${index}.${fileExtension}`.toLowerCase(),
+          uri: image.uri,
+          type: `${image.type}/${fileExtension}`,
+        } as any)
+      })
+
+      productImagesUploadForm.append('product_id', productId)
+
+      await api.post('/products/images', productImagesUploadForm)
+
+      navigation.navigate('mySales')
+    } catch (error) {
+      throw error
+    }
   }
 
   return (
@@ -115,6 +150,7 @@ export function AdPreview() {
           childrenIcon={
             <Tag size={16} style={{ marginRight: 8 }} color="#EDECEE" />
           }
+          onPress={handleCreateAd}
         />
       </HStack>
     </>
