@@ -1,7 +1,9 @@
+import { Loading } from '@components/Loading'
 import { ProductAd } from '@components/ProductAd'
+import { ToastError } from '@components/ToastError'
+import { ProductDTO } from '@dtos/ProductDTO'
 import {
   ChevronDownIcon,
-  FlatList,
   HStack,
   Icon,
   Pressable,
@@ -16,20 +18,18 @@ import {
   Text,
   VStack,
 } from '@gluestack-ui/themed'
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { AppNavigationRoutesProps } from '@routes/app.routes'
+import { api } from '@services/api'
+import { AppError } from '@utils/AppError'
 import { Plus } from 'phosphor-react-native'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
+import { FlatList } from 'react-native'
 
 export function MySales() {
-  const [myProducts, setMyProducts] = useState([
-    'Red Sneakers',
-    'Blue Sneakers',
-    'Green Sneakers',
-    'Purple Sneakers',
-    'Orange Sneakers',
-    'Black Sneakers',
-  ])
+  const [isLoading, setIsLoading] = useState(true)
+
+  const [myProducts, setMyProducts] = useState<ProductDTO[]>([])
 
   const navigation = useNavigation<AppNavigationRoutesProps>()
 
@@ -40,6 +40,28 @@ export function MySales() {
   function handleCreateAd() {
     navigation.navigate('nestedRoutes', { screen: 'createAd' })
   }
+
+  async function fetchUserProducts() {
+    try {
+      setIsLoading(true)
+      const { data } = await api.get('/users/products')
+
+      setMyProducts(data)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError ? error.message : 'Error fetching products'
+
+      return <ToastError title={title} />
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserProducts()
+    }, []),
+  )
 
   return (
     <VStack bgColor="$gray600" flex={1} py="$20" px="$6">
@@ -53,7 +75,7 @@ export function MySales() {
       </HStack>
 
       <HStack justifyContent="space-between" alignItems="center">
-        <Text fontSize="$sm">9 ads</Text>
+        <Text fontSize="$sm">{myProducts.length} ads</Text>
         <Select position="relative" defaultValue="all">
           <SelectTrigger px="$3" py="$2" w={111} borderRadius={6} h={34}>
             <SelectInput
@@ -88,23 +110,31 @@ export function MySales() {
         </Select>
       </HStack>
       <HStack mt="$5" gap="$6" flexWrap="wrap" justifyContent="space-between">
-        <FlatList
-          data={myProducts}
-          keyExtractor={(item) => item}
-          renderItem={({ item }) => (
-            <ProductAd showUser={false} onPress={handleOpenProductDetails} />
-          )}
-          columnWrapperStyle={{
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-          }}
-          numColumns={2}
-          contentContainerStyle={{
-            gap: 24,
-            flexGrow: 1,
-            paddingBottom: 450,
-          }}
-        />
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <FlatList
+            data={myProducts}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <ProductAd
+                showUser={false}
+                onPress={handleOpenProductDetails}
+                data={item}
+              />
+            )}
+            columnWrapperStyle={{
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+            }}
+            numColumns={2}
+            contentContainerStyle={{
+              gap: 24,
+              flexGrow: 1,
+              paddingBottom: 450,
+            }}
+          />
+        )}
       </HStack>
     </VStack>
   )
