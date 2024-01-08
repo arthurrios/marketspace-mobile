@@ -11,16 +11,24 @@ import { CreateAdFormDataProps } from './CreateAd'
 import { useAuth } from '@hooks/Auth'
 import { api } from '@services/api'
 import { formatPrice } from '@utils/formatPrice'
+import { UseFormReset } from 'react-hook-form'
+import * as ImagePicker from 'expo-image-picker'
 
 type RouteParamsProps = {
   formData: CreateAdFormDataProps
+  reset: UseFormReset<CreateAdFormDataProps>
+  setImages: React.Dispatch<
+    React.SetStateAction<ImagePicker.ImagePickerAsset[]>
+  >
+  setPaymentMethodsSelected: React.Dispatch<React.SetStateAction<never[]>>
 }
 
 export function AdPreview() {
   const { user } = useAuth()
   const route = useRoute()
 
-  const { formData } = route.params as RouteParamsProps
+  const { formData, reset, setImages, setPaymentMethodsSelected } =
+    route.params as RouteParamsProps
 
   const navigation = useNavigation<AppNavigationRoutesProps>()
 
@@ -55,6 +63,10 @@ export function AdPreview() {
       productImagesUploadForm.append('product_id', productId)
 
       await api.post('/products/images', productImagesUploadForm)
+
+      reset()
+      setImages([])
+      setPaymentMethodsSelected([])
 
       navigation.navigate('mySales')
     } catch (error) {

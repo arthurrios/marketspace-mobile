@@ -14,6 +14,8 @@ import { AdPreview } from '@screens/AdPreview'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useAuth } from '@hooks/Auth'
 import { Loading } from '@components/Loading'
+import { UseFormReset } from 'react-hook-form'
+import * as ImagePicker from 'expo-image-picker'
 
 export type AppRoutes = {
   home: undefined
@@ -26,6 +28,11 @@ export type AppRoutes = {
   editAd: undefined
   adPreview: {
     formData: CreateAdFormDataProps
+    reset: UseFormReset<CreateAdFormDataProps>
+    setImages: React.Dispatch<
+      React.SetStateAction<ImagePicker.ImagePickerAsset[]>
+    >
+    setPaymentMethodsSelected: React.Dispatch<React.SetStateAction<never[]>>
   }
 }
 

@@ -29,13 +29,13 @@ import {
   ToastTitle,
   FormControlErrorText,
 } from '@gluestack-ui/themed'
-import { useCallback, useEffect, useState } from 'react'
-import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { useEffect, useState } from 'react'
+import { useNavigation } from '@react-navigation/native'
 import { AppNavigationRoutesProps } from '@routes/app.routes'
 import { ArrowLeft, Check, Plus, X } from 'phosphor-react-native'
 import * as ImagePicker from 'expo-image-picker'
 import { z } from 'zod'
-import { Controller, FieldValues, UseFormReset, useForm } from 'react-hook-form'
+import { Controller, UseFormReset, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 export type CreateAdFormDataProps = {
@@ -46,6 +46,11 @@ export type CreateAdFormDataProps = {
   price: string
   acceptTrade: boolean
   paymentMethods: string[]
+  reset: UseFormReset<CreateAdFormDataProps>
+  setImages: React.Dispatch<
+    React.SetStateAction<ImagePicker.ImagePickerAsset[]>
+  >
+  setPaymentMethodsSelected: React.Dispatch<React.SetStateAction<never[]>>
 }
 
 export const createAdSchema = z.object({
@@ -82,6 +87,7 @@ export function CreateAd() {
     handleSubmit,
     setValue,
     clearErrors,
+    reset,
     formState: { errors },
   } = useForm<CreateAdFormDataProps>({
     resolver: zodResolver(createAdSchema),
@@ -95,7 +101,12 @@ export function CreateAd() {
 
   async function handleGoForward(formData: CreateAdFormDataProps) {
     try {
-      navigation.navigate('adPreview', { formData })
+      navigation.navigate('adPreview', {
+        formData,
+        reset,
+        setImages,
+        setPaymentMethodsSelected,
+      })
     } catch (error) {
       console.log(error)
     }
@@ -170,12 +181,6 @@ export function CreateAd() {
   useEffect(() => {
     setValue('images', images)
   }, [images])
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     reset()
-  //   }, []),
-  // )
 
   return (
     <>
@@ -362,12 +367,13 @@ export function CreateAd() {
               <Controller
                 control={control}
                 name="paymentMethods"
-                render={({ field: { onChange, value } }) => (
+                render={({ field }) => (
                   <VStack gap="$3">
                     <Text fontFamily="$heading" fontSize="$sm">
                       Payment methods accepted
                     </Text>
                     <CheckboxGroup
+                      {...field}
                       value={paymentMethodsSelected}
                       onChange={(keys) => {
                         setPaymentMethodsSelected(keys)
