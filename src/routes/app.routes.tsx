@@ -24,7 +24,9 @@ export type AppRoutes = {
   nestedRoutes: undefined
   createAd: undefined
   editAd: undefined
-  adPreview: { formData: CreateAdFormDataProps }
+  adPreview: {
+    formData: CreateAdFormDataProps
+  }
 }
 
 export type AppNavigationRoutesProps = BottomTabNavigationProp<AppRoutes>

@@ -10,6 +10,7 @@ import { ArrowLeft, Tag } from 'phosphor-react-native'
 import { CreateAdFormDataProps } from './CreateAd'
 import { useAuth } from '@hooks/Auth'
 import { api } from '@services/api'
+import { formatPrice } from '@utils/formatPrice'
 
 type RouteParamsProps = {
   formData: CreateAdFormDataProps
@@ -17,7 +18,6 @@ type RouteParamsProps = {
 
 export function AdPreview() {
   const { user } = useAuth()
-
   const route = useRoute()
 
   const { formData } = route.params as RouteParamsProps
@@ -36,7 +36,7 @@ export function AdPreview() {
         is_new: formData.productState === 'new',
         accept_trade: formData.acceptTrade,
         payment_methods: formData.paymentMethods,
-        price: parseFloat(formData.price.replace(',', '.')) * 100,
+        price: Number((parseFloat(formData.price) * 100).toFixed(0)),
       })
 
       const productId = data.id
@@ -116,7 +116,7 @@ export function AdPreview() {
                     $
                   </Text>
                   <Text fontSize="$xl" fontFamily="$heading" color="$blueLight">
-                    {formData.price}
+                    {formatPrice(formData.price)}
                   </Text>
                 </HStack>
               </HStack>

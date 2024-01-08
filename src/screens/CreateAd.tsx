@@ -29,13 +29,13 @@ import {
   ToastTitle,
   FormControlErrorText,
 } from '@gluestack-ui/themed'
-import { useEffect, useState } from 'react'
-import { useNavigation } from '@react-navigation/native'
+import { useCallback, useEffect, useState } from 'react'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { AppNavigationRoutesProps } from '@routes/app.routes'
 import { ArrowLeft, Check, Plus, X } from 'phosphor-react-native'
 import * as ImagePicker from 'expo-image-picker'
 import { z } from 'zod'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, FieldValues, UseFormReset, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 export type CreateAdFormDataProps = {
@@ -170,6 +170,12 @@ export function CreateAd() {
   useEffect(() => {
     setValue('images', images)
   }, [images])
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     reset()
+  //   }, []),
+  // )
 
   return (
     <>

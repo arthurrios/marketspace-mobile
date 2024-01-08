@@ -37,13 +37,17 @@ export function MySales() {
     navigation.navigate('myProduct')
   }
 
+  function handleCreateAd() {
+    navigation.navigate('nestedRoutes', { screen: 'createAd' })
+  }
+
   return (
     <VStack bgColor="$gray600" flex={1} py="$20" px="$6">
       <HStack alignItems="center" justifyContent="center" mb="$8">
         <Text fontSize="$xl" fontFamily="$heading" color="$gray100">
           My ads
         </Text>
-        <Pressable position="absolute" right={0}>
+        <Pressable position="absolute" right={0} onPress={handleCreateAd}>
           <Plus />
         </Pressable>
       </HStack>
