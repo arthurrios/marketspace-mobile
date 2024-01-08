@@ -1,3 +1,5 @@
+import { PhotoFileDTO } from '@dtos/PhotoFileDTO'
+import { ProductDTO } from '@dtos/ProductDTO'
 import {
   HStack,
   Image,
@@ -6,6 +8,8 @@ import {
   VStack,
   View,
 } from '@gluestack-ui/themed'
+import { api } from '@services/api'
+import { useState } from 'react'
 import { PressableProps } from 'react-native'
 
 type Props = PressableProps & {
@@ -15,17 +19,29 @@ type Props = PressableProps & {
   isNew: boolean
   isActive?: boolean
   showUser?: boolean
+  data: ProductDTO
 }
 
 export function ProductAd({
-  name,
-  price,
   userImg,
   isNew,
   isActive = true,
   showUser = true,
+  data,
   ...props
 }: Props) {
+  const [productImages, setProductImages] = useState<PhotoFileDTO[]>([])
+
+  // const productId = data.id
+
+  // async function fetchProductData() {
+  //   try {
+  //     const productImages = await api.get(`/products/${productId}`)
+  //     setProductImages(productImages)
+  //   } catch (error) {
+  //     throw error
+  //   }
+  // }
   return (
     <Pressable {...props}>
       <VStack>
@@ -85,7 +101,7 @@ export function ProductAd({
             w={154}
             h={100}
             source={{
-              uri: 'https://alexander-kay.com/cdn/shop/products/ak_w_dressed_wineredsuede_01_800x.jpg?v=1590234374',
+              uri: '',
             }}
             alt="Product Photo"
             rounded="$md"
