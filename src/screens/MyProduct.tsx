@@ -66,6 +66,40 @@ export function MyProduct() {
     }
   }
 
+  async function handleToggleAdIsActive(isActive: boolean) {
+    try {
+      setIsLoading(true)
+      await api.patch(`/products/${productId}`, { is_active: !isActive })
+
+      fetchProduct()
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError
+        ? error.message
+        : 'Error changing is active state'
+
+      return <ToastError title={title} />
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  async function handleDeleteAd() {
+    try {
+      setIsLoading(true)
+      await api.delete(`/products/${productId}`)
+
+      navigation.goBack()
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError ? error.message : 'Error deleting ad'
+
+      return <ToastError title={title} />
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   useEffect(() => {
     fetchProduct()
   }, [productId])
@@ -143,7 +177,7 @@ export function MyProduct() {
                         fontFamily="$heading"
                         color="$blueLight"
                       >
-                        {product.price / 100}
+                        {(product.price / 100).toFixed(2)}
                       </Text>
                     </HStack>
                   </HStack>
@@ -173,6 +207,7 @@ export function MyProduct() {
                           style={{ marginRight: 8 }}
                         />
                       }
+                      onPress={() => handleToggleAdIsActive(product.is_active)}
                     />
                   ) : (
                     <Button
@@ -185,6 +220,7 @@ export function MyProduct() {
                           style={{ marginRight: 8 }}
                         />
                       }
+                      onPress={() => handleToggleAdIsActive(product.is_active)}
                     />
                   )}
                   <Button
@@ -197,6 +233,7 @@ export function MyProduct() {
                         style={{ marginRight: 8 }}
                       />
                     }
+                    onPress={handleDeleteAd}
                   />
                 </VStack>
               </VStack>
