@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Loading } from '@components/Loading'
 import { ProductAd } from '@components/ProductAd'
 import { ToastError } from '@components/ToastError'
@@ -27,6 +28,7 @@ import { FlatList } from 'react-native'
 
 export function MySales() {
   const [isLoading, setIsLoading] = useState(true)
+  const [selectionFilter, setSelectionFilter] = useState('')
 
   const [myProducts, setMyProducts] = useState<ProductDTO[]>([])
 
@@ -46,6 +48,17 @@ export function MySales() {
       const { data } = await api.get('/users/products')
 
       setMyProducts(data)
+      if (selectionFilter === 'active') {
+        const activeProducts = data.filter(
+          (item: { is_active: boolean }) => item.is_active === true,
+        )
+        setMyProducts(activeProducts)
+      } else if (selectionFilter === 'inactive') {
+        const disabledProducts = data.filter(
+          (item: { is_active: boolean }) => item.is_active === false,
+        )
+        setMyProducts(disabledProducts)
+      }
     } catch (error) {
       const isAppError = error instanceof AppError
       const title = isAppError ? error.message : 'Error fetching products'
@@ -59,7 +72,7 @@ export function MySales() {
   useFocusEffect(
     useCallback(() => {
       fetchUserProducts()
-    }, []),
+    }, [selectionFilter]),
   )
 
   return (
@@ -75,7 +88,12 @@ export function MySales() {
 
       <HStack justifyContent="space-between" alignItems="center">
         <Text fontSize="$sm">{myProducts.length} ads</Text>
-        <Select position="relative" defaultValue="all">
+        <Select
+          position="relative"
+          selectedValue={selectionFilter}
+          defaultValue="all"
+          onValueChange={(value) => setSelectionFilter(value)}
+        >
           <SelectTrigger px="$3" py="$2" w={111} borderRadius={6} h={34}>
             <SelectInput
               paddingHorizontal={0}
@@ -106,7 +124,13 @@ export function MySales() {
           </SelectPortal>
         </Select>
       </HStack>
-      <HStack mt="$5" gap="$6" flexWrap="wrap" justifyContent="space-between">
+      <HStack
+        mt="$5"
+        gap="$6"
+        flexWrap="wrap"
+        flex={1}
+        justifyContent="space-between"
+      >
         {isLoading ? (
           <Loading />
         ) : (
