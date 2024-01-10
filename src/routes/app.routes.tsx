@@ -22,8 +22,10 @@ export type AppRoutes = {
   mySales: undefined
   logOut: undefined
   product: undefined
-  myProduct: undefined
-  nestedRoutes: undefined
+  myProduct: { productId: string }
+  nestedRoutes: {
+    screen: string
+  }
   createAd: undefined
   editAd: undefined
   adPreview: {

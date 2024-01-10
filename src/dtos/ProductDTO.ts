@@ -1,4 +1,6 @@
+import { PaymentMethodsDTO } from './PaymentMethodsDTO'
 import { ProductImageDTO } from './ProductImageDTO'
+import { UserDTO } from './UserDTO'
 
 export type ProductDTO = {
   id: string
@@ -8,9 +10,10 @@ export type ProductDTO = {
   is_active: boolean
   is_new: boolean
   accept_trade: boolean
-  payment_methods: string[]
+  payment_methods: PaymentMethodsDTO[]
   product_images: ProductImageDTO[]
   price: number
   created_at: Date
   updated_at: Date
+  user: UserDTO
 }

@@ -5,7 +5,6 @@ import { ProductDTO } from '@dtos/ProductDTO'
 import {
   ChevronDownIcon,
   HStack,
-  Icon,
   Pressable,
   Select,
   SelectBackdrop,
@@ -33,8 +32,8 @@ export function MySales() {
 
   const navigation = useNavigation<AppNavigationRoutesProps>()
 
-  function handleOpenProductDetails() {
-    navigation.navigate('myProduct')
+  function handleOpenProductDetails(productId: string) {
+    navigation.navigate('myProduct', { productId })
   }
 
   function handleCreateAd() {
@@ -85,9 +84,7 @@ export function MySales() {
               fontSize="$sm"
               placeholderTextColor="#1A181B"
             />
-            <SelectIcon ml="$2">
-              <Icon as={ChevronDownIcon} />
-            </SelectIcon>
+            <SelectIcon as={ChevronDownIcon} ml="$2" />
           </SelectTrigger>
           <SelectPortal>
             <SelectBackdrop />
@@ -119,7 +116,7 @@ export function MySales() {
             renderItem={({ item }) => (
               <ProductAd
                 showUser={false}
-                onPress={handleOpenProductDetails}
+                onPress={() => handleOpenProductDetails(item.id)}
                 data={item}
               />
             )}
