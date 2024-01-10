@@ -34,8 +34,6 @@ export function MyProduct() {
   const [isLoading, setIsLoading] = useState(true)
   const [product, setProduct] = useState<ProductDTO>({} as ProductDTO)
 
-  const [adIsActive, setAdIsActive] = useState(true)
-
   const navigation = useNavigation<AppNavigationRoutesProps>()
 
   const route = useRoute()
@@ -91,7 +89,7 @@ export function MyProduct() {
               images={product.product_images.map(
                 (image) => `${api.defaults.baseURL}/images/${image.path}`,
               )}
-              adIsActive={adIsActive}
+              adIsActive={product.is_active}
             />
 
             <ScrollView px="$6" py="$5" flex={1}>
@@ -165,7 +163,7 @@ export function MyProduct() {
                   </VStack>
                 </VStack>
                 <VStack gap="$2" mb={50} bgColor="$gray600">
-                  {!adIsActive ? (
+                  {!product.is_active ? (
                     <Button
                       title="Reactivate ad"
                       childrenIcon={
