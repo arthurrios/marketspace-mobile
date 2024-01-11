@@ -144,7 +144,7 @@ export function EditAd() {
       setPaymentMethodsSelected([])
       setImagesToDeleteIds([])
 
-      navigation.navigate('mySales')
+      navigation.navigate('myProduct', { productId })
     } catch (error) {
       throw error
     }
@@ -215,14 +215,11 @@ export function EditAd() {
   function handleRemoveSelectedImage(indexToRemove: number) {
     if (imagesUri) {
       const updatedImagesUri = [...imagesUri]
-      // console.log('updatedImageUri:', updatedImagesUri)
       const removedImageUri = updatedImagesUri.splice(indexToRemove, 1)[0]
-      // console.log('removed ImageUri:', removedImageUri)
 
       const removedImage = product.product_images.find(
         (image) => image.path === removedImageUri,
       )
-      // console.log('removed Image:', removedImage)
 
       if (removedImage && !imagesToDeleteIds.includes(removedImage.id)) {
         setImagesToDeleteIds((prevImagesToDeleteIds) => [
@@ -230,19 +227,12 @@ export function EditAd() {
           removedImage.id,
         ])
       }
-      // console.log('imagesToDeleteIds:', imagesToDeleteIds)
       setImagesUri(updatedImagesUri)
-      // console.log('imagesUri:', imagesUri)
 
-      // Get the current form data for the 'images' field
       const currentImages = getValues('images')
-      // console.log('currentImages in Form:', currentImages)
 
-      // Remove the corresponding image from the form data
       const updatedImages = currentImages.filter((_, i) => i !== indexToRemove)
-      // console.log('currentImages in Form less one to remove:', updatedImages)
 
-      // Update the 'images' field in the form data
       setValue('images', updatedImages)
     }
   }
@@ -292,17 +282,6 @@ export function EditAd() {
     }, [productId]),
   )
 
-  useEffect(() => {
-    console.log(
-      getValues('images'),
-      getValues('adTitle'),
-      getValues('description'),
-      getValues('productState'),
-      getValues('price'),
-      getValues('acceptTrade'),
-      getValues('paymentMethods'),
-    )
-  }, [imagesUri])
   if (isLoading) {
     return <Loading />
   } else {
