@@ -14,14 +14,15 @@ import { api } from '@services/api'
 import { formatPrice } from '@utils/formatPrice'
 import { UseFormReset } from 'react-hook-form'
 import * as ImagePicker from 'expo-image-picker'
+import { ProductImageDTO } from '@dtos/ProductImageDTO'
 
 type RouteParamsProps = {
   formData: CreateAdFormDataProps
   reset: UseFormReset<CreateAdFormDataProps>
   setImages: React.Dispatch<
-    React.SetStateAction<ImagePicker.ImagePickerAsset[]>
+    React.SetStateAction<ImagePicker.ImagePickerAsset[] | ProductImageDTO[]>
   >
-  setPaymentMethodsSelected: React.Dispatch<React.SetStateAction<never[]>>
+  setPaymentMethodsSelected: React.Dispatch<React.SetStateAction<string[]>>
 }
 
 export function AdPreview() {

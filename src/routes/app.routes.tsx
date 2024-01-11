@@ -25,6 +25,7 @@ export type AppRoutes = {
   myProduct: { productId: string }
   nestedRoutes: {
     screen: string
+    params?: { productId: string }
   }
   createAd: undefined
   editAd: undefined

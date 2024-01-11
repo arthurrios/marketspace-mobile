@@ -14,7 +14,11 @@ import {
   ScrollView,
   Text,
 } from '@gluestack-ui/themed'
-import { useNavigation, useRoute } from '@react-navigation/native'
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native'
 import { AppNavigationRoutesProps } from '@routes/app.routes'
 import { api } from '@services/api'
 import { AppError } from '@utils/AppError'
@@ -24,7 +28,7 @@ import {
   Power,
   TrashSimple,
 } from 'phosphor-react-native'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 type RouteParamsProps = {
   productId: string
@@ -45,7 +49,10 @@ export function MyProduct() {
   }
 
   function handleEditProduct() {
-    navigation.navigate('editAd')
+    navigation.navigate('nestedRoutes', {
+      screen: 'editAd',
+      params: { productId },
+    })
   }
 
   async function fetchProduct() {
@@ -100,9 +107,11 @@ export function MyProduct() {
     }
   }
 
-  useEffect(() => {
-    fetchProduct()
-  }, [productId])
+  useFocusEffect(
+    useCallback(() => {
+      fetchProduct()
+    }, [productId]),
+  )
 
   return (
     <>
