@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-useless-catch */
 import { Button } from '@components/Button'
 import { Input } from '@components/Input'
@@ -46,8 +48,7 @@ import { ToastError } from '@components/ToastError'
 import { api } from '@services/api'
 import { AppError } from '@utils/AppError'
 import { Loading } from '@components/Loading'
-import { PhotoFileDTO } from '@dtos/PhotoFileDTO'
-import { transformProductImageToPhotoFile } from '@utils/transformProductImageToPhotoFile'
+import { transformProductImageToAsset } from '@utils/transformProductImageToAsset'
 
 type RouteParamsProps = {
   productId: string
@@ -55,7 +56,7 @@ type RouteParamsProps = {
 
 export type EditAdFormDataProps = {
   imagesUri: string[]
-  images: PhotoFileDTO[]
+  images: ImagePicker.ImagePickerAsset[]
   adTitle: string
   description: string
   productState: string
@@ -123,15 +124,20 @@ export function EditAd() {
         price: Number(parseFloat(formData.price) * 100),
       })
 
-      // const productImagesUploadForm = new FormData()
+      const productImagesUploadForm = new FormData()
 
-      // productImagesUploadForm.append('product_id', productId)
+      formData.images.forEach((image, index) => {
+        const fileExtension = image.uri.split('.').pop()
+        productImagesUploadForm.append('images', {
+          name: `${image.fileName}${index}.${fileExtension}`.toLowerCase(),
+          uri: image.uri,
+          type: `${image.type}/${fileExtension}`,
+        } as any)
+      })
 
-      // formData.images.forEach((photoFile) => {
-      //   productImagesUploadForm.append('images', photoFile)
-      // })
+      productImagesUploadForm.append('product_id', productId)
 
-      // await api.post('/products/images', productImagesUploadForm)
+      await api.post('/products/images', productImagesUploadForm)
 
       reset()
       setImagesUri([])
@@ -157,14 +163,6 @@ export function EditAd() {
       if (photosSelected.canceled) return
 
       const newSelectedImages = photosSelected.assets
-      const newSelectPhotoFiles = newSelectedImages.map((image, index) => {
-        const fileExtension = image.uri.split('.').pop()
-        return {
-          name: `${image.fileName}${index}.${fileExtension}`.toLowerCase(),
-          uri: image.uri,
-          type: `${image.type}/${fileExtension}`,
-        }
-      })
 
       const newImagesSelectedUri = newSelectedImages.map((image) => image.uri)
 
@@ -197,7 +195,7 @@ export function EditAd() {
         return updatedImagesUri
       })
 
-      setValue('images', newSelectPhotoFiles)
+      setValue('images', newSelectedImages)
     } catch (error) {
       console.log(error)
     } finally {
@@ -258,9 +256,7 @@ export function EditAd() {
       setImagesUri(data.product_images.map((image) => image.path))
       setValue(
         'images',
-        data.product_images.map((image) =>
-          transformProductImageToPhotoFile(image),
-        ),
+        data.product_images.map((image) => transformProductImageToAsset(image)),
       )
       setValue('adTitle', data.name)
       setValue('description', data.description)

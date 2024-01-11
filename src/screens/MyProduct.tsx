@@ -28,7 +28,7 @@ import {
   Power,
   TrashSimple,
 } from 'phosphor-react-native'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 type RouteParamsProps = {
   productId: string
