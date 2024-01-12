@@ -64,8 +64,8 @@ export function Home() {
     navigation.navigate('nestedRoutes', { screen: 'createAd' })
   }
 
-  function handleOpenProductDetails() {
-    navigation.navigate('product')
+  function handleOpenProductDetails(productId: string) {
+    navigation.navigate('product', { productId })
   }
 
   function performSearch() {

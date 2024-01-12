@@ -34,3 +34,5 @@ Add your products to be sold or traded. Provide images, if its new or used and t
 4. If your using a simulator:
 - IOS: `npm run ios`
 - Android: `npm run android`
+5. Clone the backend repository and follow its steps:
+[Backend](https://github.com/arthurrios/marketspace-api)
