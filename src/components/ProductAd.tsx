@@ -7,17 +7,23 @@ import {
   VStack,
   View,
 } from '@gluestack-ui/themed'
-import { useAuth } from '@hooks/Auth'
 import { api } from '@services/api'
 import { PressableProps } from 'react-native'
 
 type Props = PressableProps & {
   showUser?: boolean
+  userImg?: string
   data: ProductDTO
+  showDisabled?: boolean
 }
 
-export function ProductAd({ showUser = true, data, ...props }: Props) {
-  const { user } = useAuth()
+export function ProductAd({
+  showUser = true,
+  userImg,
+  showDisabled = true,
+  data,
+  ...props
+}: Props) {
   if (data) {
     return (
       <Pressable {...props}>
@@ -41,7 +47,7 @@ export function ProductAd({ showUser = true, data, ...props }: Props) {
               {showUser && (
                 <Image
                   size="full"
-                  source={{ uri: user.avatar }}
+                  source={`${api.defaults.baseURL}/images/${userImg}`}
                   alt="User Image"
                   resizeMode="contain"
                   rounded="$full"
@@ -49,7 +55,7 @@ export function ProductAd({ showUser = true, data, ...props }: Props) {
               )}
             </View>
 
-            {!data.is_active && (
+            {!data.is_active && showDisabled && (
               <>
                 <View
                   position="absolute"
@@ -107,31 +113,55 @@ export function ProductAd({ showUser = true, data, ...props }: Props) {
             </View>
           </View>
 
-          <Text
-            fontSize="$sm"
-            color={data.is_active ? '$gray200' : '$gray400'}
-            mt="$1"
-          >
-            {data.name}
-          </Text>
+          {showDisabled ? (
+            <>
+              <Text
+                fontSize="$sm"
+                color={data.is_active ? '$gray200' : '$gray400'}
+                mt="$1"
+              >
+                {data.name}
+              </Text>
 
-          <HStack gap="$1" alignItems="flex-end">
-            <Text
-              fontFamily={data.is_active ? '$heading' : '$body'}
-              fontSize="$xs"
-              mb={-1}
-              color={data.is_active ? '$gray100' : '$gray400'}
-            >
-              $
-            </Text>
-            <Text
-              fontFamily={data.is_active ? '$heading' : '$body'}
-              fontSize="$md"
-              color={data.is_active ? '$gray100' : '$gray400'}
-            >
-              {(data.price / 100).toFixed(2)}
-            </Text>
-          </HStack>
+              <HStack gap="$1" alignItems="flex-end">
+                <Text
+                  fontFamily={data.is_active ? '$heading' : '$body'}
+                  fontSize="$xs"
+                  mb={-1}
+                  color={data.is_active ? '$gray100' : '$gray400'}
+                >
+                  $
+                </Text>
+                <Text
+                  fontFamily={data.is_active ? '$heading' : '$body'}
+                  fontSize="$md"
+                  color={data.is_active ? '$gray100' : '$gray400'}
+                >
+                  {(data.price / 100).toFixed(2)}
+                </Text>
+              </HStack>
+            </>
+          ) : (
+            <>
+              <Text fontSize="$sm" color="$gray200" mt="$1">
+                {data.name}
+              </Text>
+
+              <HStack gap="$1" alignItems="flex-end">
+                <Text
+                  fontFamily="$heading"
+                  fontSize="$xs"
+                  mb={-1}
+                  color="$gray100"
+                >
+                  $
+                </Text>
+                <Text fontFamily="$heading" fontSize="$md" color="$gray100">
+                  {(data.price / 100).toFixed(2)}
+                </Text>
+              </HStack>
+            </>
+          )}
         </VStack>
       </Pressable>
     )

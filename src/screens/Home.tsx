@@ -1,6 +1,7 @@
 import { Button } from '@components/Button'
 import { ConditionTag } from '@components/ConditionTag'
 import { Input } from '@components/Input'
+import { Loading } from '@components/Loading'
 import { ProductAd } from '@components/ProductAd'
 import { ToastError } from '@components/ToastError'
 import { UserImage } from '@components/UserImage'
@@ -24,7 +25,6 @@ import {
   View,
   CheckboxLabel,
   ModalFooter,
-  FlatList,
 } from '@gluestack-ui/themed'
 import { useAuth } from '@hooks/Auth'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
@@ -40,11 +40,12 @@ import {
   Tag,
   X,
 } from 'phosphor-react-native'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { FlatList } from 'react-native'
 
 export function Home() {
   const [isLoading, setIsLoading] = useState(true)
-  const [products, setProducts] = useState([])
+  const [products, setProducts] = useState<ProductDTO[]>([])
   const [userProducts, setUserProducts] = useState<ProductDTO[]>([])
 
   const [showModal, setShowModal] = useState(false)
@@ -63,8 +64,25 @@ export function Home() {
     navigation.navigate('product')
   }
 
+  async function fetchProducts() {
+    try {
+      setIsLoading(true)
+      const { data } = await api.get('/products')
+
+      setProducts(data)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError ? error.message : 'Error fetching user products'
+
+      return <ToastError title={title} />
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   async function fetchUserProducts() {
     try {
+      setIsLoading(true)
       const { data } = await api.get('/users/products')
 
       setUserProducts(data)
@@ -77,8 +95,10 @@ export function Home() {
       setIsLoading(false)
     }
   }
+
   useFocusEffect(
     useCallback(() => {
+      fetchProducts()
       fetchUserProducts()
     }, []),
   )
@@ -302,26 +322,32 @@ export function Home() {
         </Modal>
       </View>
 
-      <FlatList
-        data={products}
-        keyExtractor={(item) => item}
-        renderItem={({ item }) => (
-          <ProductAd
-            userImg="https://github.com/arthurrios.png"
-            onPress={handleOpenProductDetails}
-          />
-        )}
-        columnWrapperStyle={{
-          flexWrap: 'wrap',
-          justifyContent: 'space-between',
-        }}
-        numColumns={2}
-        contentContainerStyle={{
-          gap: 24,
-          flexGrow: 1,
-          paddingBottom: 450,
-        }}
-      />
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <FlatList
+          data={products}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <ProductAd
+              data={item}
+              userImg={item.user.avatar}
+              showDisabled={false}
+              onPress={() => handleOpenProductDetails(item.id)}
+            />
+          )}
+          columnWrapperStyle={{
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+          }}
+          numColumns={2}
+          contentContainerStyle={{
+            gap: 24,
+            flexGrow: 1,
+            paddingBottom: 450,
+          }}
+        />
+      )}
     </VStack>
   )
 }
