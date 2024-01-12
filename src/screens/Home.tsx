@@ -47,6 +47,7 @@ export function Home() {
   const [isLoading, setIsLoading] = useState(true)
   const [products, setProducts] = useState<ProductDTO[]>([])
   const [userProducts, setUserProducts] = useState<ProductDTO[]>([])
+  const [searchText, setSearchText] = useState('')
 
   const [showModal, setShowModal] = useState(false)
   const [isNew, setIsNew] = useState(true)
@@ -62,6 +63,17 @@ export function Home() {
 
   function handleOpenProductDetails() {
     navigation.navigate('product')
+  }
+
+  function performSearch() {
+    if (searchText) {
+      const filteredProducts = products.filter((product) =>
+        product.name.toLowerCase().includes(searchText.toLowerCase()),
+      )
+      setProducts(filteredProducts)
+    } else {
+      fetchProducts()
+    }
   }
 
   async function fetchProducts() {
@@ -95,6 +107,13 @@ export function Home() {
       setIsLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (searchText.trim() === '') {
+      fetchProducts()
+      console.log('Reloaded products')
+    }
+  }, [searchText])
 
   useFocusEffect(
     useCallback(() => {
@@ -169,9 +188,13 @@ export function Home() {
               Buy various products
             </Text>
 
-            <Input placeholder="Search ad">
+            <Input
+              placeholder="Search ad"
+              onChangeText={(text) => setSearchText(text)}
+              onSubmitEditing={performSearch}
+            >
               <HStack gap="$3" mr="$2" alignItems="center">
-                <Pressable>
+                <Pressable onPress={performSearch}>
                   <MagnifyingGlass weight="bold" color="#3E3A40" />
                 </Pressable>
                 <View h={18} w={1} bgColor="$gray400" />
