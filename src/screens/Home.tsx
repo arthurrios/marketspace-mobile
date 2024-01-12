@@ -2,7 +2,9 @@ import { Button } from '@components/Button'
 import { ConditionTag } from '@components/ConditionTag'
 import { Input } from '@components/Input'
 import { ProductAd } from '@components/ProductAd'
+import { ToastError } from '@components/ToastError'
 import { UserImage } from '@components/UserImage'
+import { ProductDTO } from '@dtos/ProductDTO'
 import {
   Checkbox,
   CheckboxIcon,
@@ -25,9 +27,10 @@ import {
   FlatList,
 } from '@gluestack-ui/themed'
 import { useAuth } from '@hooks/Auth'
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { AppNavigationRoutesProps } from '@routes/app.routes'
 import { api } from '@services/api'
+import { AppError } from '@utils/AppError'
 import {
   ArrowRight,
   Check,
@@ -37,18 +40,14 @@ import {
   Tag,
   X,
 } from 'phosphor-react-native'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 export function Home() {
+  const [isLoading, setIsLoading] = useState(true)
+  const [products, setProducts] = useState([])
+  const [userProducts, setUserProducts] = useState<ProductDTO[]>([])
+
   const [showModal, setShowModal] = useState(false)
-  const [products, setProducts] = useState([
-    'Red Sneakers',
-    'Blue Sneakers',
-    'Green Sneakers',
-    'Purple Sneakers',
-    'Orange Sneakers',
-    'Black Sneakers',
-  ])
   const [isNew, setIsNew] = useState(true)
   const [paymentMethodsSelected, setPaymentMethodsSelected] = useState([])
 
@@ -63,6 +62,26 @@ export function Home() {
   function handleOpenProductDetails() {
     navigation.navigate('product')
   }
+
+  async function fetchUserProducts() {
+    try {
+      const { data } = await api.get('/users/products')
+
+      setUserProducts(data)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError ? error.message : 'Error fetching user products'
+
+      return <ToastError title={title} />
+    } finally {
+      setIsLoading(false)
+    }
+  }
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserProducts()
+    }, []),
+  )
 
   return (
     <VStack bgColor="$gray600" px="$6">
@@ -95,33 +114,33 @@ export function Home() {
           <Text fontSize="$sm" color="$gray300">
             Your ads
           </Text>
-          <HStack
-            bgColor="rgba(100, 122, 199, 0.1)"
-            px="$5"
-            py="$3"
-            justifyContent="space-between"
-            alignItems="center"
-            borderRadius={6}
-          >
-            <HStack alignItems="center" gap="$4">
-              <Tag color="#364D9D" />
-              <VStack>
-                <Text fontSize="$xl" fontFamily="$heading">
-                  4
-                </Text>
-                <Text fontSize="$sm">active ads</Text>
-              </VStack>
-            </HStack>
+          <Pressable onPress={() => navigation.navigate('mySales')}>
+            <HStack
+              bgColor="rgba(100, 122, 199, 0.1)"
+              px="$5"
+              py="$3"
+              justifyContent="space-between"
+              alignItems="center"
+              borderRadius={6}
+            >
+              <HStack alignItems="center" gap="$4">
+                <Tag color="#364D9D" />
+                <VStack>
+                  <Text fontSize="$xl" fontFamily="$heading">
+                    {userProducts.filter((product) => product.is_active).length}
+                  </Text>
+                  <Text fontSize="$sm">active ads</Text>
+                </VStack>
+              </HStack>
 
-            <Pressable>
               <HStack gap="$2" alignItems="center">
                 <Text color="$blue" fontSize="$sm" fontFamily="$heading">
                   My ads
                 </Text>
                 <ArrowRight size={18} color="#364D9D" />
               </HStack>
-            </Pressable>
-          </HStack>
+            </HStack>
+          </Pressable>
         </VStack>
 
         <VStack gap="$6">

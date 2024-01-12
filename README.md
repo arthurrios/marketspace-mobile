@@ -1,6 +1,6 @@
-# Daily Diet
+# Marketspace
 ## The App
-Add your meals with day and time so it calculates whether you are on your diet or not! You can also edit existing meals or delete them.
+Add your products to be sold or traded. Provide images, if its new or used and the payment methods you accept. Search for products from other sellers.
 
 ## Status
 - Development 🚧
