@@ -51,7 +51,10 @@ export function Home() {
 
   const [showModal, setShowModal] = useState(false)
   const [isNew, setIsNew] = useState(true)
-  const [paymentMethodsSelected, setPaymentMethodsSelected] = useState([])
+  const [acceptTrade, setAcceptTrade] = useState(false)
+  const [paymentMethodsSelected, setPaymentMethodsSelected] = useState<
+    string[]
+  >([])
 
   const { user } = useAuth()
 
@@ -84,11 +87,41 @@ export function Home() {
       setProducts(data)
     } catch (error) {
       const isAppError = error instanceof AppError
-      const title = isAppError ? error.message : 'Error fetching user products'
+      const title = isAppError ? error.message : 'Error fetching products'
 
       return <ToastError title={title} />
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  async function handleResetFilter() {
+    setIsNew(true)
+    setAcceptTrade(false)
+    setPaymentMethodsSelected([])
+    setShowModal(false)
+    fetchProducts()
+  }
+
+  async function handleFilterProducts() {
+    try {
+      const filteredProducts = products.filter(
+        (product) =>
+          product.is_new === isNew ||
+          product.accept_trade === acceptTrade ||
+          paymentMethodsSelected.some((selectedMethod) =>
+            product.payment_methods.some(
+              (method) => method.key === selectedMethod,
+            ),
+          ),
+      )
+      setProducts(filteredProducts)
+      setShowModal(false)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError ? error.message : 'Error filtering products'
+
+      return <ToastError title={title} />
     }
   }
 
@@ -111,7 +144,6 @@ export function Home() {
   useEffect(() => {
     if (searchText.trim() === '') {
       fetchProducts()
-      console.log('Reloaded products')
     }
   }, [searchText])
 
@@ -212,7 +244,10 @@ export function Home() {
 
         <Modal
           isOpen={showModal}
-          onClose={() => setShowModal(false)}
+          onClose={() => {
+            setShowModal(false)
+            fetchProducts()
+          }}
           closeOnOverlayClick
           position="relative"
         >
@@ -271,6 +306,8 @@ export function Home() {
                     Accept trade?
                   </Text>
                   <Switch
+                    onToggle={() => setAcceptTrade(!acceptTrade)}
+                    value={acceptTrade}
                     sx={{
                       _light: {
                         props: {
@@ -337,8 +374,16 @@ export function Home() {
             </ModalBody>
             <ModalFooter>
               <HStack space="md">
-                <Button title="Reset filters" variant="tertiary" />
-                <Button title="Apply filters" variant="secondary" />
+                <Button
+                  title="Reset filters"
+                  variant="tertiary"
+                  onPress={handleResetFilter}
+                />
+                <Button
+                  title="Apply filters"
+                  variant="secondary"
+                  onPress={handleFilterProducts}
+                />
               </HStack>
             </ModalFooter>
           </ModalContent>
