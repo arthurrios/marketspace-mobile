@@ -23,6 +23,7 @@ import { api } from '@services/api'
 import { AppError } from '@utils/AppError'
 import { ArrowLeft, WhatsappLogo } from 'phosphor-react-native'
 import { useCallback, useState } from 'react'
+import { Linking } from 'react-native'
 
 type RouteParamsProps = {
   productId: string
@@ -56,6 +57,19 @@ export function Product() {
       return <ToastError title={title} />
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  async function handleContactOwner() {
+    try {
+      const whatsappUrl = `https://wa.me/${product.user.tel}`
+
+      await Linking.openURL(whatsappUrl)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError ? error.message : 'Error contacting the owner'
+
+      return <ToastError title={title} />
     }
   }
 
@@ -166,6 +180,7 @@ export function Product() {
               </Text>
             </HStack>
             <Button
+              onPress={handleContactOwner}
               childrenIcon={
                 <WhatsappLogo
                   size={16}
