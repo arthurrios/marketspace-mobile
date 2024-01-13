@@ -1,7 +1,12 @@
+/* eslint-disable camelcase */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-useless-catch */
 import { UserDTO } from '@dtos/UserDTO'
 import { api } from '@services/api'
-import { storageAuthTokenSave } from '@storage/storageAuthToken'
+import {
+  storageAuthTokenGet,
+  storageAuthTokenSave,
+} from '@storage/storageAuthToken'
 import {
   storageUserGet,
   storageUserRemove,
@@ -35,12 +40,16 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     setUser(userData)
   }
 
-  async function storageUserAndTokenSave(userData: UserDTO, token: string) {
+  async function storageUserAndTokenSave(
+    userData: UserDTO,
+    token: string,
+    refresh_token: string,
+  ) {
     try {
       setIsLoadingUserStorageData(true)
 
       await storageUserSave(userData)
-      await storageAuthTokenSave(token)
+      await storageAuthTokenSave({ token, refresh_token })
     } catch (error) {
       throw error
     } finally {
@@ -54,7 +63,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
       if (data.user && data.token) {
         setIsLoadingUserStorageData(true)
-        await storageUserAndTokenSave(data.user, data.token)
+        await storageUserAndTokenSave(data.user, data.token, data.refresh_token)
         userAndTokenUpdate(data.user, data.token)
       }
     } catch (error) {
@@ -79,10 +88,10 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   async function loadUserData() {
     try {
       const userLogged = await storageUserGet()
+      const { token } = await storageAuthTokenGet()
 
-      if (userLogged) {
-        setUser(userLogged)
-        setIsLoadingUserStorageData(false)
+      if (token && userLogged) {
+        userAndTokenUpdate(userLogged, token)
       }
     } catch (error) {
       throw error
