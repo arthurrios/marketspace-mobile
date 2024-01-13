@@ -2,9 +2,6 @@
 ## The App
 Add your products to be sold or traded. Provide images, if its new or used and the payment methods you accept. Search for products from other sellers.
 
-## Status
-- Development 🚧
-
 ### Previews
 <div style="display: flex; gap: 0.5rem; flex-direction: column">
 <div style="display: flex; gap: 0.5rem">
